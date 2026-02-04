@@ -54,6 +54,11 @@ const Login = () => {
           password: password,
         
         };
+      } else if (role === 'region-admin') {
+        requestBody = {
+          email_or_phone: email,
+          password: password,
+        };
       }
 
       const response = await fetch(endpoint, {
@@ -72,8 +77,8 @@ const Login = () => {
         const isRoleMatch = data.role === role;
 
         if (!isRoleMatch) {
-          throw new Error(
-            `Invalid login attempt. Selected role "${role}" does not match the credential role "${data.role}". Please select the correct role and try again.`
+          throw new Error( 
+            `Invalid UserName or Password for the selected role: ${role}. Please check your credentials and try again.`
           );
         }
 
@@ -87,6 +92,8 @@ const Login = () => {
           redirectTo = "/DashBoard"; // Admin dashboard
         } else if (data.role === 'district-admin') {
           redirectTo = "/DistrictRegistration"; // District admin dashboard
+        } else if (data.role === 'region-admin') {
+          redirectTo = "/RegionDashboard"; // Region admin dashboard
         } else if (data.role === 'member') {
           // For member/user role
           redirectTo = "/UserProfile";
@@ -116,6 +123,8 @@ const Login = () => {
         return 'Admin Login';
       case 'district-admin':
         return 'District Admin Login';
+      case 'region-admin':
+        return 'Region Admin Login';
       case 'member':
         return 'Member Login';
       default:
@@ -164,6 +173,20 @@ const Login = () => {
                     />
                     <label className="form-check-label" htmlFor="districtAdminRole">
                       District Admin
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="role"
+                      id="regionAdminRole"
+                      value="region-admin"
+                      checked={role === 'region-admin'}
+                      onChange={() => setRole('region-admin')}
+                    />
+                    <label className="form-check-label" htmlFor="regionAdminRole">
+                      Region Admin
                     </label>
                   </div>
                   <div className="form-check">
@@ -283,6 +306,36 @@ const Login = () => {
                         type="password"
                         className="form-control"
                         id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Region Admin Login Fields */}
+                {role === 'region-admin' && (
+                  <>
+                    <div className="mb-3">
+                      <label htmlFor="regionEmail" className="form-label">Email or Phone</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="regionEmail"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="regionPassword" className="form-label">Password</label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        id="regionPassword"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
