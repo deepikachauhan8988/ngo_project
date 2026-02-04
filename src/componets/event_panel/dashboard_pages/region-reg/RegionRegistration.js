@@ -186,6 +186,42 @@ const RegionRegistration = () => {
       if (!response.ok) {
         // Handle specific error messages from the backend
         const errorData = await response.json().catch(() => ({}));
+        
+        // Check if error data contains field-specific errors (like email, phone, etc.)
+        if (typeof errorData === 'object' && errorData !== null) {
+          const fieldErrors = {};
+          let hasFieldErrors = false;
+          
+          // Check for field-specific errors
+          if (errorData.email) {
+            fieldErrors.email = errorData.email;
+            hasFieldErrors = true;
+          }
+          if (errorData.phone) {
+            fieldErrors.phone = errorData.phone;
+            hasFieldErrors = true;
+          }
+          if (errorData.full_name) {
+            fieldErrors.full_name = errorData.full_name;
+            hasFieldErrors = true;
+          }
+          if (errorData.password) {
+            fieldErrors.password = errorData.password;
+            hasFieldErrors = true;
+          }
+          if (errorData.allocated_district) {
+            fieldErrors.allocated_district = errorData.allocated_district;
+            hasFieldErrors = true;
+          }
+          
+          // If we found field-specific errors, set them and return
+          if (hasFieldErrors) {
+            setErrors(fieldErrors);
+            setIsSubmitting(false);
+            return;
+          }
+        }
+        
         throw new Error(errorData.message || errorData.detail || 'Failed to register region');
       }
       
