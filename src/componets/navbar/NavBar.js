@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import EventLogo from '../../assets/images/br-event-logo.png'
 import { Button, Container } from 'react-bootstrap';
 import { FaFacebook, FaTwitter, FaWhatsapp, FaInstagram } from 'react-icons/fa';
-
+   
 function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState({});
