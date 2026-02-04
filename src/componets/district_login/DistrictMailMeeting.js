@@ -228,6 +228,39 @@ const DistrictMailMeeting = () => {
     }
   };
 
+  // Handle Select All
+  const handleSelectAll = () => {
+    const allMemberIds = members.map(member => String(member.member_id || member.unique_id || member.id));
+    setFormData(prev => ({
+      ...prev,
+      member_ids: allMemberIds
+    }));
+    
+    // Clear error for this field if it exists
+    if (errors.member_ids) {
+      setErrors({
+        ...errors,
+        member_ids: null
+      });
+    }
+  };
+
+  // Handle Deselect All
+  const handleDeselectAll = () => {
+    setFormData(prev => ({
+      ...prev,
+      member_ids: []
+    }));
+    
+    // Clear error for this field if it exists
+    if (errors.member_ids) {
+      setErrors({
+        ...errors,
+        member_ids: null
+      });
+    }
+  };
+
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -402,10 +435,30 @@ const DistrictMailMeeting = () => {
                   <Row>
                     <Col md={12} className="mb-3">
                       <Form.Group controlId="members">
-                        <Form.Label>
-                          <FaUsers className="me-1" />
-                          Select Members
-                        </Form.Label>
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <Form.Label className="mb-0">
+                            <FaUsers className="me-1" />
+                            Select Members
+                          </Form.Label>
+                          {members.length > 0 && (
+                            <div className="d-flex gap-2">
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={handleSelectAll}
+                              >
+                                Select All
+                              </Button>
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                onClick={handleDeselectAll}
+                              >
+                                Deselect All
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                         {errors.member_ids && (
                           <div className="text-danger small mt-1">{errors.member_ids}</div>
                         )}

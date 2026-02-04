@@ -71,6 +71,8 @@ const DistrictLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =>
         },
       ],
     },
+
+
     {
       icon: <FaBullseye />, // Changed to a more relevant icon
       label: "District Activities",

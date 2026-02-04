@@ -53,6 +53,9 @@ import ManageUpdates from "./componets/event_panel/dashboard_pages/latestupdates
 import ManageFeedback from "./componets/event_panel/dashboard_pages/feedback/ManageFeedback";
 import ManageRegion from "./componets/event_panel/dashboard_pages/region-reg/ManageRegion";
 import RegionRegistration from "./componets/event_panel/dashboard_pages/region-reg/RegionRegistration";
+import RegionregLeftNav from "./componets/region_dashboard/RegionregLeftNav";
+import RegionregHeader from "./componets/region_dashboard/RegionregHeader";
+import RegionDashBoard from "./componets/region_dashboard/RegionDashBoard";
 
 
 function App() {
@@ -83,7 +86,10 @@ function App() {
     "/ManageUpdates",
     "/ManageFeedback",
     "/RegionRegistration",
-    "/ManageRegion"
+    "/ManageRegion",
+    "/RegionDashBoard",
+    "/RegionregHeader",
+    "/RegionregLeftNav"
   ]);
 
   const shouldHideNavbar = hiddenPaths.has(location.pathname);
@@ -233,6 +239,21 @@ function App() {
            <Route path="/RegionRegistration" element={
             <ProtectedRoute>
               <RegionRegistration />
+            </ProtectedRoute>
+          } />
+           <Route path="/RegionregLeftNav" element={
+            <ProtectedRoute>
+              <RegionregLeftNav />
+            </ProtectedRoute>
+          } />
+           <Route path="/RegionregHeader" element={
+            <ProtectedRoute>
+              <RegionregHeader />
+            </ProtectedRoute>
+          } />
+           <Route path="/RegionDashBoard" element={
+            <ProtectedRoute>
+              <RegionDashBoard />
             </ProtectedRoute>
           } />
           

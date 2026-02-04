@@ -53,52 +53,9 @@ const RegionregLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =
       path: "/DashBoard",
       active: true,
     },
-    {
-      icon: <FaClipboardList />, // Changed
-      label: "District Registrations",
-      path: "/DistrictRegistrations",
-      active: true,
-    },
-    {
-      icon: <FaTasks />, // Changed
-      label: "District Manage Registrations",
-      path: "/DistrictManageRegistration",
-      active: true,
-    },
-    {
-      icon: <FaUsersCog />, // Changed
-      label: "Manage Registration",
-      path: "/ManageRegistration",
-      active: true,
-    },
-    {
-      icon: <FaEdit />, // Changed
-      label: "Manage About Us ",
-      path: "/ManageAboutUs",
-      active: true,
-    },
-    {
-      icon: <FaImages />, // Changed
-      label: "Manage Carousel ",
-      path: "/ManageCarousel",
-      active: true,
-    },
-    {
-      icon: <FaBullseye />, // Changed
-      label: "Activity",
-      submenu: [
-        {
-          label: "Add Activity",
-          path: "/AddActivity",
-          icon: <FaPlusSquare />, // Changed
-        },
-        {
-          label: "Manage Activity",
-          path: "/ManageActivity",
-          icon: <FaListUl />, // Changed
-        },
-      ],
-    },
+   
+   
+  
     // {
     //   icon: <FaWindowMaximize />, // Changed
     //   label: "Header",
@@ -115,44 +72,8 @@ const RegionregLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =
     //     },
     //   ],
     // },
-    {
-      icon: <FaProjectDiagram />, // Changed
-      label: "Associative Wings",
-      submenu: [
-        {
-          label: "Add Wings",
-          path: "/AddWings",
-          icon: <FaPlusSquare />, // Changed
-        },
-        {
-          label: "Manage Wings",
-          path: "/ManageWings",
-          icon: <FaListUl />, // Changed
-        },
-      ],
-    },
-    {
-      icon: <FaEdit />, // Changed
-      label: "Latest Updates",
-      submenu: [
-        {
-          label: "Add Updates",
-          path: "/AddUpdates",
-          icon: <FaPlusSquare />, // Changed
-        },
-        {
-          label: "Manage Updates",
-          path: "/ManageUpdates",
-          icon: <FaListUl />, // Changed
-        },
-      ],
-    },
-    {
-      icon: <FaComments />, // Changed
-      label: "Manage Feedback",
-      path: "/ManageFeedback",
-      active: true,
-    },
+   
+    
   ];
 
   return (

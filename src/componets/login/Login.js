@@ -93,7 +93,7 @@ const Login = () => {
         } else if (data.role === 'district-admin') {
           redirectTo = "/DistrictRegistration"; // District admin dashboard
         } else if (data.role === 'region-admin') {
-          redirectTo = "/RegionDashboard"; // Region admin dashboard
+          redirectTo = "/RegionDashBoard"; // Region admin dashboard
         } else if (data.role === 'member') {
           // For member/user role
           redirectTo = "/UserProfile";

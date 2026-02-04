@@ -153,6 +153,19 @@ const LeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) => {
       path: "/ManageFeedback",
       active: true,
     },
+    {
+      icon: <FaClipboardList />, // Changed
+      label: "Region Registration",
+      path: "/RegionRegistration",
+      active: true,
+    },
+    {
+      icon: <FaTasks />, // Changed
+      label: "Manage Region",
+      path: "/ManageRegion",
+      active: true,
+    },
+    
   ];
 
   return (
