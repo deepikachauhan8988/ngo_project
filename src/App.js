@@ -51,6 +51,8 @@ import ContactUs from "./componets/pages/ContactUs";
 import AddUpdates from "./componets/event_panel/dashboard_pages/latestupdates/AddUpdates";
 import ManageUpdates from "./componets/event_panel/dashboard_pages/latestupdates/ManageUpdates";
 import ManageFeedback from "./componets/event_panel/dashboard_pages/feedback/ManageFeedback";
+import ManageRegion from "./componets/event_panel/dashboard_pages/region-reg/ManageRegion";
+import RegionRegistration from "./componets/event_panel/dashboard_pages/region-reg/RegionRegistration";
 
 
 function App() {
@@ -79,7 +81,9 @@ function App() {
     "/ManageCarousel",
     "/AddUpdates",
     "/ManageUpdates",
-    "/ManageFeedback"
+    "/ManageFeedback",
+    "/RegionRegistration",
+    "/ManageRegion"
   ]);
 
   const shouldHideNavbar = hiddenPaths.has(location.pathname);
@@ -221,6 +225,17 @@ function App() {
               <ManageFeedback />
             </ProtectedRoute>
           } />
+            <Route path="/ManageRegion" element={
+            <ProtectedRoute>
+              <ManageRegion />
+            </ProtectedRoute>
+          } />
+           <Route path="/RegionRegistration" element={
+            <ProtectedRoute>
+              <RegionRegistration />
+            </ProtectedRoute>
+          } />
+          
          
         </Routes>
       </main>
