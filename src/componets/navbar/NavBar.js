@@ -62,6 +62,7 @@ function NavBar() {
           </div>
         </Container>
       </div>
+      
       <div className='sticky-top'>
         <header id="header" className={`header d-flex align-items-center sticky-top ${isMenuOpen ? 'mobile-nav-active' : ''}`}>
           <div className="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-end">
