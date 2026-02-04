@@ -1,0 +1,84 @@
+
+        .consultation-card {
+          border-radius: 8px;
+          overflow: hidden;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          border: none;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .consultation-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .consultation-header {
+          background-color: #2ECC71;
+          color: white;
+          padding: 1rem 1.5rem;
+        }
+        
+        .consultation-avatar {
+          width: 45px;
+          height: 45px;
+          font-size: 1.25rem;
+          font-weight: bold;
+        }
+        
+        .consultation-date {
+          font-size: 0.9rem;
+          opacity: 0.9;
+        }
+        
+        .section-title {
+          font-weight: 600;
+          margin-bottom: 1rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid rgba(40, 167, 69, 0.2);
+          display: flex;
+          align-items: center;
+        }
+        
+        .info-group {
+          background-color: #f8f9fa;
+          border-radius: 6px;
+          padding: 1rem;
+          border: 1px solid #e9ecef;
+        }
+        
+        .info-item {
+          display: flex;
+          margin-bottom: 0.75rem;
+          align-items: flex-start;
+        }
+        
+        .info-item:last-child {
+          margin-bottom: 0;
+        }
+        
+        .info-label {
+          font-weight: 600;
+          color: #495057;
+          min-width: 140px;
+          margin-right: 1rem;
+        }
+        
+        .info-value {
+          color: #212529;
+          word-break: break-word;
+          flex-grow: 1;
+        }
+        
+        .card-hover {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cursor-pointer {
+          cursor: pointer;
+        }
+   
