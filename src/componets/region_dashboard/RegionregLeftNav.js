@@ -59,6 +59,13 @@ const RegionregLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =
       path: "/RegionMail",
       active: true,
     },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Get Region Mail",
+      path: "/GetRegionMail",
+      active: true,
+    },
      {
       icon: <FaTachometerAlt />,
       label: "Report Problem",
