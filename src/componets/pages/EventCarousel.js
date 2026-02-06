@@ -131,6 +131,7 @@ function EventCarousel() {
     <div className="hero-carousel-container hero">
       {/* Animated Background Slides */}
       <div className="carousel-background">
+        
         {/* Current slide */}
         {carouselSlides[activeSlideIndex] && (
           <div
@@ -159,6 +160,7 @@ function EventCarousel() {
       {/* News Card Overlay */}
       {showNewsCard && (
         <div className="news-card-overlay">
+          
           <div className="news-card">
             <button 
               className="news-card-close"
@@ -233,6 +235,7 @@ function EventCarousel() {
       <div className="hero-wrapper">
         <div className="container">
           <div className="row align-items-center">
+            
             {/* Text Content - Only show current slide content */}
             <div className="col-lg-6 hero-content" data-aos="fade-right">
               <h1>{carouselSlides[activeSlideIndex]?.title}</h1>

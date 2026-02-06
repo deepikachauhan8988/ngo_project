@@ -46,6 +46,10 @@ const ManageRegistration = () => {
     status: "pending",
     other_text: "",
     image: null,
+    gender: "", // New field
+    date_of_birth: "", // New field
+    registration_fee: "", // New field
+    primary_membership: "", // New field
   });
 
   // State for file preview
@@ -180,6 +184,10 @@ const ManageRegistration = () => {
           status: regData.status,
           other_text: regData.other_text,
           image: null, // Reset to null for proper handling
+          gender: regData.gender || "", // New field
+          date_of_birth: regData.date_of_birth || "", // New field
+          registration_fee: regData.registration_fee || "", // New field
+          primary_membership: regData.primary_membership || "", // New field
         });
 
         // Set existing image URL for preview
@@ -379,6 +387,10 @@ const ManageRegistration = () => {
         education_level: formData.education_level,
         status: formData.status,
         other_text: formData.other_text,
+        gender: formData.gender, // New field
+        date_of_birth: formData.date_of_birth, // New field
+        registration_fee: formData.registration_fee, // New field
+        primary_membership: formData.primary_membership, // New field
       };
 
       console.log("Submitting data for registration ID:", formData.id);
@@ -388,7 +400,7 @@ const ManageRegistration = () => {
       if (formData.image) {
         // For FormData (when there's a new image), include all fields
         const dataToSend = new FormData();
-        dataToSend.append("id", formData.id);
+         dataToSend.append("id", formData.id);
         dataToSend.append("member_id", formData.member_id); // Include member_id for FormData
         dataToSend.append("full_name", formData.full_name);
         dataToSend.append("address", formData.address);
@@ -403,6 +415,10 @@ const ManageRegistration = () => {
         dataToSend.append("education_level", formData.education_level);
         dataToSend.append("status", formData.status);
         dataToSend.append("other_text", formData.other_text);
+        dataToSend.append("gender", formData.gender); // New field
+        dataToSend.append("date_of_birth", formData.date_of_birth); // New field
+        dataToSend.append("registration_fee", formData.registration_fee); // New field
+        dataToSend.append("primary_membership", formData.primary_membership); // New field
         
         if (formData.image) {
           dataToSend.append("image", formData.image, formData.image.name);
@@ -727,8 +743,20 @@ const ManageRegistration = () => {
                                       <Card.Text className="text-muted mb-2">
                                         <strong>Organization:</strong> {reg.organization_name}
                                       </Card.Text>
-                                      <Card.Text className="text-muted mb-3">
+                                      <Card.Text className="text-muted mb-2">
                                         <strong>Designation:</strong> {reg.designation}
+                                      </Card.Text>
+                                      <Card.Text className="text-muted mb-2">
+                                        <strong>Gender:</strong> {reg.gender}
+                                      </Card.Text>
+                                      <Card.Text className="text-muted mb-2">
+                                        <strong>Date of Birth:</strong> {reg.date_of_birth}
+                                      </Card.Text>
+                                      <Card.Text className="text-muted mb-2">
+                                        <strong>Registration Fee:</strong> {reg.registration_fee}
+                                      </Card.Text>
+                                      <Card.Text className="text-muted mb-3">
+                                        <strong>Primary Membership:</strong> {reg.primary_membership}
                                       </Card.Text>
                                       
                                       <div className="d-flex align-items-center mb-3">
@@ -963,6 +991,56 @@ const ManageRegistration = () => {
                           placeholder="Enter education level"
                           name="education_level"
                           value={formData.education_level}
+                          onChange={handleChange}
+                          disabled={!isEditing}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>Gender</Form.Label>
+                        <Form.Select
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleChange}
+                          disabled={!isEditing}
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </Form.Select>
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>Date of Birth</Form.Label>
+                        <Form.Control
+                          type="date"
+                          name="date_of_birth"
+                          value={formData.date_of_birth}
+                          onChange={handleChange}
+                          disabled={!isEditing}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>Registration Fee</Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="Enter registration fee"
+                          name="registration_fee"
+                          value={formData.registration_fee}
+                          onChange={handleChange}
+                          disabled={!isEditing}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>Primary Membership</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter primary membership"
+                          name="primary_membership"
+                          value={formData.primary_membership}
                           onChange={handleChange}
                           disabled={!isEditing}
                         />

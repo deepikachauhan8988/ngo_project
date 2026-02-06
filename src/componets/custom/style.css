@@ -214,3 +214,49 @@ body {
 .testimonial-slider .swiper-button-next::after {
   font-size: 20px; /* Adjust arrow size */
 }
+.carousel-action-buttons {
+  /* gap: 12px; */
+  bottom: 263px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-wrap: wrap;
+  justify-content: center;
+  /* 添加以下属性确保在桌面视图中也正确显示 */
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+@media (width: 844px) {
+  .carousel-action-buttons {
+   
+    bottom: 253px !important;
+    left: 50% !important;
+   
+}
+}
+/* 媒体查询：仅在移动视图中显示为 flex */
+@media (max-width: 768px) {
+  .carousel-action-buttons {
+    display: flex !important;
+    bottom: auto;
+    position: relative;
+    margin-top: 20px;
+    padding: 0 10px;
+  }
+  
+  .carousel-btn {
+    flex: 1;
+    min-width: 100px;
+    margin: 5px;
+    padding: 10px 5px;
+    font-size: 14px;
+  }
+  
+  .btn-icon {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 18px;
+  }
+}

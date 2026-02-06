@@ -785,7 +785,7 @@
 @media (max-width: 480px) {
   .carousel-action-buttons {
     gap: 12px;
-    bottom: 20px;
+    bottom: 333px;
     left: 50%;
     transform: translateX(-50%);
     flex-wrap: wrap;
@@ -794,7 +794,7 @@
 
   .carousel-btn {
     padding: 9px 16px;
-    font-size: 12px;
+    font-size: 6px;
   }
 
   .btn-icon {
