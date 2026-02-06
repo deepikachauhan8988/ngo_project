@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useAuthFetch } from "../context/AuthFetch";
 
+
 const DashBoard = () => {
   const navigate = useNavigate();
   const { auth, logout, refreshAccessToken, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -132,16 +133,27 @@ const DashBoard = () => {
     ? members 
     : members.filter((member) => member.status === activeFilter);
 
-  // Filter donations based on active filter
-  const filteredDonations = activeFilter === "all" 
-    ? donations 
-    : donations.filter((donation) => donation.status === activeFilter.toUpperCase());
+  // Always filter donations to show only pending status
+  const filteredDonations = donations.filter((donation) => donation.status === "PENDING");
 
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return "Invalid Date";
+      }
+      return date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -235,70 +247,45 @@ const DashBoard = () => {
                             ? "All Members" 
                             : `${activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)} Members`
                         ) : (
-                          activeFilter === "all" 
-                            ? "All Donations" 
-                            : `${activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)} Donations`
+                          "Pending Donations"
                         )}
                         ({activeTable === "members" ? filteredMembers.length : filteredDonations.length})
                       </h2>
-                      <div>
-                        <Dropdown>
-                          <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
-                            Filter: {activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)}
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item 
-                              onClick={() => handleFilterChange("all")}
-                              active={activeFilter === "all"}
-                            >
-                              All
-                            </Dropdown.Item>
-                            {activeTable === "members" ? (
-                              <>
-                                <Dropdown.Item 
-                                  onClick={() => handleFilterChange("pending")}
-                                  active={activeFilter === "pending"}
-                                >
-                                  Pending ({pendingMembersCount})
-                                </Dropdown.Item>
-                                <Dropdown.Item 
-                                  onClick={() => handleFilterChange("accepted")}
-                                  active={activeFilter === "accepted"}
-                                >
-                                  Accepted ({acceptedMembersCount})
-                                </Dropdown.Item>
-                                <Dropdown.Item 
-                                  onClick={() => handleFilterChange("rejected")}
-                                  active={activeFilter === "rejected"}
-                                >
-                                  Rejected ({rejectedMembersCount})
-                                </Dropdown.Item>
-                              </>
-                            ) : (
-                              <>
-                                <Dropdown.Item 
-                                  onClick={() => handleFilterChange("pending")}
-                                  active={activeFilter === "pending"}
-                                >
-                                  Pending ({pendingDonationsCount})
-                                </Dropdown.Item>
-                                <Dropdown.Item 
-                                  onClick={() => handleFilterChange("success")}
-                                  active={activeFilter === "success"}
-                                >
-                                  Successful ({successfulDonationsCount})
-                                </Dropdown.Item>
-                                <Dropdown.Item 
-                                  onClick={() => handleFilterChange("failed")}
-                                  active={activeFilter === "failed"}
-                                >
-                                  Failed ({failedDonationsCount})
-                                </Dropdown.Item>
-                              </>
-                            )}
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
+                      {activeTable === "members" && (
+                        <div>
+                          <Dropdown>
+                            <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
+                              Filter: {activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)}
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item 
+                                onClick={() => handleFilterChange("all")}
+                                active={activeFilter === "all"}
+                              >
+                                All
+                              </Dropdown.Item>
+                              <Dropdown.Item 
+                                onClick={() => handleFilterChange("pending")}
+                                active={activeFilter === "pending"}
+                              >
+                                Pending ({pendingMembersCount})
+                              </Dropdown.Item>
+                              <Dropdown.Item 
+                                onClick={() => handleFilterChange("accepted")}
+                                active={activeFilter === "accepted"}
+                              >
+                                Accepted ({acceptedMembersCount})
+                              </Dropdown.Item>
+                              <Dropdown.Item 
+                                onClick={() => handleFilterChange("rejected")}
+                                active={activeFilter === "rejected"}
+                              >
+                                Rejected ({rejectedMembersCount})
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
+                      )}
                     </div>
                     <div className="dashboard-table">
                       <Table striped bordered hover responsive>
@@ -312,8 +299,8 @@ const DashBoard = () => {
                               <th>Phone</th>
                               <th>Occupation</th>
                               <th>Education</th>
-                              <th>Status</th>
                               <th>Registration Date</th>
+                              <th>Status</th>
                             </tr>
                           ) : (
                             <tr>
@@ -324,7 +311,6 @@ const DashBoard = () => {
                               <th>Email</th>
                               <th>Phone</th>
                               <th>Amount</th>
-                              <th>Status</th>
                               <th>Created At</th>
                             </tr>
                           )}
@@ -340,12 +326,12 @@ const DashBoard = () => {
                                 <td>{member.phone}</td>
                                 <td>{member.occupation || "N/A"}</td>
                                 <td>{member.education_level || "N/A"}</td>
+                                <td>{formatDate(member.created_at)}</td>
                                 <td>
-                                  <span className={`badge status-badge ${getStatusBadgeClass(member.status)}`}>
+                                  <span className={`badge ${getStatusBadgeClass(member.status)}`}>
                                     {member.status || "N/A"}
                                   </span>
                                 </td>
-                                <td>{formatDate(member.created_at)}</td>
                               </tr>
                             ))
                           ) : (
@@ -358,11 +344,6 @@ const DashBoard = () => {
                                 <td>{donation.email}</td>
                                 <td>{donation.phone}</td>
                                 <td>₹{donation.amount}</td>
-                                <td>
-                                  <span className={`badge status-badge ${getStatusBadgeClass(donation.status)}`}>
-                                    {donation.status || "N/A"}
-                                  </span>
-                                </td>
                                 <td>{formatDate(donation.created_at)}</td>
                               </tr>
                             ))
