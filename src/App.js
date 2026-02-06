@@ -62,6 +62,7 @@ import ReportProblem from "./componets/region_dashboard/ReportProblem";
 import Problem from "./componets/navbar/Problem";
 import GetAdminMail from "./componets/event_panel/dashboard_pages/GetAdminMail";
 import GetDistrictMail from "./componets/district_login/GetDistrictMail";
+import GetRegionMail from "./componets/region_dashboard/region_mail/GetRegionMail";
 
 
 function App() {
@@ -101,6 +102,7 @@ function App() {
     "/ReportProblem",
     "/GetAdminMail",
     "/GetDistrictMail",
+    "/GetRegionMail",
   ]);
 
   const shouldHideNavbar = hiddenPaths.has(location.pathname);
@@ -293,6 +295,12 @@ function App() {
            <Route path="/GetDistrictMail" element={
             <ProtectedRoute>
               <GetDistrictMail />
+            </ProtectedRoute>
+          } />
+
+             <Route path="/GetRegionMail" element={
+            <ProtectedRoute>
+              <GetRegionMail />
             </ProtectedRoute>
           } />
           
