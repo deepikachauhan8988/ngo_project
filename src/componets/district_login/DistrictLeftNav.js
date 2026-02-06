@@ -69,6 +69,12 @@ const DistrictLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =>
           path: "/DistrictMailMeeting",
           icon: <FaEnvelope />, // Changed
         },
+
+         {
+          label: "Get Mail List",
+          path: "/GetDistrictMail",
+          icon: <FaEnvelope />, // Changed
+        },
       ],
     },
 
