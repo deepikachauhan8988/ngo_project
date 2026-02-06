@@ -4,7 +4,7 @@ import { FaCalendarAlt, FaMapMarkerAlt, FaTag, FaRupeeSign, FaCashRegister, FaUs
 import { useNavigate } from 'react-router-dom';
 import '../../../assets/css/Activity.css'; // We'll create this CSS file for custom styles
 
-function Activity() {
+function Activity({ isHomePage = false }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -337,6 +337,12 @@ function Activity() {
     }
   };
 
+  const handleCardClick = (activityId) => {
+    if (isHomePage) {
+      navigate('/Activity');
+    }
+  };
+
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     
@@ -430,6 +436,9 @@ function Activity() {
     return true;
   });
 
+  // Limit to 3 activities on home page
+  const displayActivities = isHomePage ? filteredActivities.slice(0, 3) : filteredActivities;
+
   if (loading) {
     return (
       <div className="loading-container text-center py-5">
@@ -459,7 +468,7 @@ function Activity() {
   }
 
   return (
-      <div className="container border rounded-3 shadow-lg p-4 bg-white mt-2">
+      <div className={`container ${!isHomePage ? 'border rounded-3 shadow-lg p-4 bg-white mt-2' : ''}`}>
       <section id="activities" className="activities-section">
         {registrationMessage && (
           <div className="alert-container mb-4">
@@ -471,23 +480,25 @@ function Activity() {
 
         <div className=" text-center">
           <h2 className="section-title">Activities</h2>
-         
+          
         </div>
 
-        <Tabs
-          activeKey={activeFilter}
-          onSelect={(k) => setActiveFilter(k)}
-          className="activity-filters mb-4"
-          justify
-        >
-          <Tab eventKey="all" title="All Activities" />
-          <Tab eventKey="upcoming" title="Upcoming" />
-          <Tab eventKey="present" title="Ongoing" />
-          <Tab eventKey="past" title="Past" />
-        </Tabs>
+        {!isHomePage && (
+          <Tabs
+            activeKey={activeFilter}
+            onSelect={(k) => setActiveFilter(k)}
+            className="activity-filters mb-4"
+            justify
+          >
+            <Tab eventKey="all" title="All Activities" />
+            <Tab eventKey="upcoming" title="Upcoming" />
+            <Tab eventKey="present" title="Ongoing" />
+            <Tab eventKey="past" title="Past" />
+          </Tabs>
+        )}
 
         <Row className="activity-cards">
-          {filteredActivities.map((activity, index) => {
+          {displayActivities.map((activity, index) => {
             const { day, monthYear } = formatDate(activity.activity_date_time);
             const time = formatTime(activity.activity_date_time);
             const status = getStatusBadge(activity);
@@ -496,8 +507,12 @@ function Activity() {
               'https://picsum.photos/seed/activity/400/250.jpg';
 
             return (
-              <Col lg={4} md={6} className="mb-4" key={activity.id}>
-                <Card className="activity-card h-100">
+              <Col lg={isHomePage ? 4 : 4} md={6} className="mb-4" key={activity.id}>
+                <Card 
+                  className={`activity-card h-100 ${isHomePage ? 'home-card' : ''}`} 
+                  onClick={() => handleCardClick(activity.activity_id)}
+                  style={{ cursor: isHomePage ? 'pointer' : 'default' }}
+                >
                   <div className="card-img-container">
                     <Card.Img variant="top" src={imageSrc} className="activity-image" />
                     <div className="date-badge">
@@ -535,46 +550,58 @@ function Activity() {
                       </div>
                     </div>
                   </Card.Body>
-                  <Card.Footer className="activity-footer">
-                    {!activity.is_past && (
-                      <div className="action-buttons">
-                        <Button 
-                          variant="primary" 
-                          className="join-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleJoinClick(activity.activity_id);
-                          }}
-                          disabled={joiningForActivity === activity.activity_id || joinedActivities.includes(activity.activity_id)}
-                        >
-                          {joinedActivities.includes(activity.activity_id) 
-                            ? 'Joined' 
-                            : (joiningForActivity === activity.activity_id ? 'Joining...' : 'Join Now')}
+                  {!isHomePage && (
+                    <Card.Footer className="activity-footer">
+                      {!activity.is_past && (
+                        <div className="action-buttons">
+                          <Button 
+                            variant="primary" 
+                            className="join-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleJoinClick(activity.activity_id);
+                            }}
+                            disabled={joiningForActivity === activity.activity_id || joinedActivities.includes(activity.activity_id)}
+                          >
+                            {joinedActivities.includes(activity.activity_id) 
+                              ? 'Joined' 
+                              : (joiningForActivity === activity.activity_id ? 'Joining...' : 'Join Now')}
+                          </Button>
+                          <Button 
+                            variant="success" 
+                            className="pay-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePayClick(activity.activity_id);
+                            }}
+                            disabled={payingForActivity === activity.activity_id || joinedActivities.includes(activity.activity_id)}
+                          >
+                            {payingForActivity === activity.activity_id ? 'Processing...' : 'Pay Now'}
+                          </Button>
+                        </div>
+                      )}
+                      {activity.is_past && (
+                        <Button variant="secondary" className="w-100" disabled>
+                          Activity Ended
                         </Button>
-                        <Button 
-                          variant="success" 
-                          className="pay-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePayClick(activity.activity_id);
-                          }}
-                          disabled={payingForActivity === activity.activity_id || joinedActivities.includes(activity.activity_id)}
-                        >
-                          {payingForActivity === activity.activity_id ? 'Processing...' : 'Pay Now'}
-                        </Button>
-                      </div>
-                    )}
-                    {activity.is_past && (
-                      <Button variant="secondary" className="w-100" disabled>
-                        Activity Ended
-                      </Button>
-                    )}
-                  </Card.Footer>
+                      )}
+                    </Card.Footer>
+                  )}
                 </Card>
               </Col>
             );
           })}
+          
         </Row>
+        {isHomePage && (
+            <Button 
+              variant="primary" 
+              className="view-all-btn mt-3"
+              onClick={() => navigate('/Activity')}
+            >
+              View All Activities
+            </Button>
+          )}
       </section>
 
       {/* Email Modal */}

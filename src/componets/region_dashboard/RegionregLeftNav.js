@@ -49,8 +49,20 @@ const RegionregLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =
   const menuItems = [
     {
       icon: <FaTachometerAlt />,
-      label: "Dashboard",
-      path: "/DashBoard",
+      label: "Region DashBoard",
+      path: "/RegionDashBoard",
+      active: true,
+    },
+     {
+      icon: <FaTachometerAlt />,
+      label: "Region Mail",
+      path: "/RegionMail",
+      active: true,
+    },
+     {
+      icon: <FaTachometerAlt />,
+      label: "Report Problem",
+      path: "/ReportProblem",
       active: true,
     },
    
@@ -82,13 +94,13 @@ const RegionregLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =
       <div className={`sidebar ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
         <div className="sidebar-header">
           <div className="logo-container">
-            <div className="logo"></div>
+            <div className="logo"> 
+              {sidebarOpen && <h5 className="dashboard-title">Region Dashboard</h5>}
+            </div>
           </div>
         </div>
 
-        <div className="sidebar-heading">
-          <h5 className="dashboard-title">Admin Dashboard</h5>
-        </div>
+       
 
         <Nav className="sidebar-nav flex-column">
           {menuItems

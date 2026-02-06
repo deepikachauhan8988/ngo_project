@@ -165,6 +165,12 @@ const LeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) => {
       path: "/ManageRegion",
       active: true,
     },
+     {
+      icon: <FaTasks />, // Changed
+      label: "AdminMail",
+      path: "/AdminMail",
+      active: true,
+    },
     
   ];
 

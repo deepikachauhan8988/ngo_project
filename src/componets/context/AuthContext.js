@@ -40,9 +40,9 @@ export const AuthProvider = ({ children }) => {
   // LOGIN
   const login = useCallback((data) => {
     console.log("Login function called with data:", data); // Debug log
-   
+    
     // This logic correctly handles the login API response you provided:
-    // { "access": "...", "refresh": "...", "unique_id": "...", "role": "...", "allocated_district": "..." }
+    // { "access": "...", "refresh": "...", "unique_id": "...", "role": "...", "allocated_district": ["district1", "district2"] }
     const authData = {
       access: data.access || data.token || data.accessToken,
       refresh: data.refresh || data.refreshToken,
@@ -50,12 +50,12 @@ export const AuthProvider = ({ children }) => {
       unique_id: data.unique_id || data.user_id || data.id || data.userId || data.pk,
       allocated_district: data.allocated_district || null,
     };
-   
+    
     console.log("Processed auth data:", authData); // Debug log
-   
+    
     setAuth(authData);
     setIsAuthenticated(true);
-   
+    
     // Store in localStorage for persistence
     localStorage.setItem('auth', JSON.stringify(authData));
   }, []);

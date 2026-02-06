@@ -219,7 +219,15 @@ function EventCarousel() {
           <span className="btn-icon">❤️</span>
           Donation
         </button>
+         <button 
+          className="carousel-btn  carousel-btn-success " 
+          onClick={() => navigate('/Problem')}
+        >
+            <span className="btn-icon">📝</span>
+           Report Issue
+        </button>
       </div>
+      
 
       {/* Content Wrapper */}
       <div className="hero-wrapper">

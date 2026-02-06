@@ -22,6 +22,26 @@
 
 
 }
+.Login-page h1{
+  font-size: 18px;
+  color: #0d77cb;
+  font-weight: 600;
+}
+.login-con{
+  
+}
+.br-span-star{
+  color: red;
+}
+.form-control{
+  font-size: 10px;
+}
+.form-check-input{
+  border: 1px solid black !important;
+}
+.trilok-submit-btn{
+  background-color: #0d77cb;
+}
 .form-check-input[type=checkbox] {
     border-radius: .25em;
     border: #000000 1px solid !important;

@@ -441,6 +441,10 @@
   background: linear-gradient(135deg, #dc3545, #c82333);
   color: white;
 }
+.carousel-btn-success {
+ background-color: #28a745;
+  color: white;
+}
 
 .carousel-btn-donation:hover {
   background: linear-gradient(135deg, #c82333, #a71d2a);
