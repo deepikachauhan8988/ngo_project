@@ -171,7 +171,12 @@ const LeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) => {
       path: "/AdminMail",
       active: true,
     },
-    
+      {
+      icon: <FaTasks />, // Changed
+      label: "Report Problem Admin",
+      path: "/ReportProblemAdmin",
+      active: true,
+    },
     {
       icon: <FaTasks />, // Changed
       label: "GetAdminMail",

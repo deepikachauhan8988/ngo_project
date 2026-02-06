@@ -55,6 +55,12 @@ const DistrictLeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) =>
       path: "/DistrictDashboard",
       active: true,
     },
+     {
+      icon: <FaTachometerAlt />,
+      label: "Report Problem District",
+      path: "/ReportProblemDistrict",
+      active: true,
+    },
     {
       icon: <FaUsers />, // Changed to a more relevant icon
       label: "Members List",
