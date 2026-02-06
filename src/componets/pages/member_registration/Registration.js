@@ -54,6 +54,15 @@ const Registration = () => {
         { value: 'other', label: 'Other' },
     ];
 
+    // Function to format file size to KB
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
     // Fetch membership options on component mount
     useEffect(() => {
         const fetchMembershipOptions = async () => {
@@ -179,10 +188,30 @@ const Registration = () => {
         }
     };
 
-    // Handle file upload
+    // Handle file upload with size validation
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // Check file size (50KB to 100KB)
+            const fileSizeKB = file.size / 1024;
+            
+            if (fileSizeKB < 50 || fileSizeKB > 100) {
+                setErrors({
+                    ...errors,
+                    image: `Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`,
+                });
+                // Clear the image preview if the size is invalid
+                setImagePreview(null);
+                // Clear the image from formData
+                setFormData({
+                    ...formData,
+                    image: null,
+                });
+                // Reset the file input
+                e.target.value = '';
+                return;
+            }
+            
             setFormData({
                 ...formData,
                 image: file,
@@ -196,8 +225,8 @@ const Registration = () => {
             reader.readAsDataURL(file);
         }
         
-        // Clear image error when file is selected
-        if (errors.image) {
+        // Clear image error when file is selected and valid
+        if (errors.image && file && file.size / 1024 >= 50 && file.size / 1024 <= 100) {
             setErrors({
                 ...errors,
                 image: null,
@@ -241,9 +270,15 @@ const Registration = () => {
             newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
         }
 
-        // Image validation - now required
+        // Image validation - now required with size check
         if (!formData.image) {
             newErrors.image = 'Image is required';
+        } else {
+            // Check image size (50KB to 100KB)
+            const fileSizeKB = formData.image.size / 1024;
+            if (fileSizeKB < 50 || fileSizeKB > 100) {
+                newErrors.image = `Image size must be between 50KB and 100KB. Your image is ${formatFileSize(formData.image.size)}.`;
+            }
         }
 
         // Address validation
@@ -900,7 +935,7 @@ const Registration = () => {
                                     required
                                 />
                                 <Form.Text id="image-help" muted>
-                                    Upload a recent photo (JPG, PNG format)
+                                    Upload a recent photo (JPG, PNG format) between 50KB and 100KB
                                 </Form.Text>
                                 {errors.image && (
                                     <div className="text-danger mt-1" id="image-error">{errors.image}</div>
@@ -908,6 +943,11 @@ const Registration = () => {
                                 {imagePreview && (
                                     <div className="mt-2">
                                         <Image src={imagePreview} alt="Image preview" thumbnail width={100} height={100} />
+                                        {formData.image && (
+                                            <div className="mt-1">
+                                                <small className="text-muted">File size: {formatFileSize(formData.image.size)}</small>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </Form.Group>
