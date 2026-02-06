@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; 
 import { Container } from 'react-bootstrap';
+import "../../assets/css/login.css";
 
 const Login = () => {
   const [role, setRole] = useState('admin'); // Default role is 'admin'
@@ -13,6 +14,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // --- NEW: State for password visibility ---
+  const [showPassword, setShowPassword] = useState(false);
 
   // List of 13 districts of Uttarakhand
   const districts = [
@@ -25,6 +29,11 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // --- NEW: Function to toggle password visibility ---
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -131,6 +140,7 @@ const Login = () => {
   };
 
   return (
+    <Container className='login-box-two'>
     <Container className='login-con'>
     <div className="login-container">
       <div className="login-background"></div>
@@ -191,14 +201,25 @@ const Login = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                {/* --- MODIFIED: Password input with toggle --- */}
+                <div className="password-input-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={togglePasswordVisibility}
+                    disabled={isLoading}
+                  >
+                    <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -219,14 +240,25 @@ const Login = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                {/* --- MODIFIED: Password input with toggle --- */}
+                <div className="password-input-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={togglePasswordVisibility}
+                    disabled={isLoading}
+                  >
+                    <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -262,14 +294,25 @@ const Login = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                {/* --- MODIFIED: Password input with toggle --- */}
+                <div className="password-input-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={togglePasswordVisibility}
+                    disabled={isLoading}
+                  >
+                    <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -290,14 +333,25 @@ const Login = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="regionPassword">Password</label>
-                <input
-                  type="password"
-                  id="regionPassword"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                {/* --- MODIFIED: Password input with toggle --- */}
+                <div className="password-input-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="regionPassword"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={togglePasswordVisibility}
+                    disabled={isLoading}
+                  >
+                    <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -315,183 +369,9 @@ const Login = () => {
         </form>
       </div>
       
-      <style jsx>{`
-        .login-container {
-          position: relative;
-          min-height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .login-background {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-         
-          background-size: 400% 400%;
-          animation: gradientBG 15s ease infinite;
-          z-index: -1;
-        }
-        
-        @keyframes gradientBG {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        
-        .login-box {
-          width: 90%;
-          max-width: 450px;
-          background-color: rgba(255, 255, 255, 0.95);
-          border-radius: 15px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-          overflow: hidden;
-          transition: transform 0.3s ease;
-        }
-        
-        .login-box:hover {
-          transform: translateY(-5px);
-        }
-        
-        .login-header {
-          background-color: #1a2a6c;
-          color: white;
-          padding: 20px;
-          text-align: center;
-        }
-        
-        .login-header h1 {
-          margin: 0;
-          font-size: 24px;
-          font-weight: 600;
-        }
-        
-        .error-message {
-          background-color: #f8d7da;
-          color: #fdf7f8;
-          padding: 12px;
-          margin: 15px;
-          border-radius: 5px;
-          border: 1px solid #f5c6cb;
-        }
-        
-        .role-tabs {
-          display: flex;
-          background-color: #f8f9fa;
-          border-bottom: 1px solid #e9ecef;
-        }
-        
-        .role-tab {
-          flex: 1;
-          padding: 15px 5px;
-          background: none;
-          border: none;
-          cursor: pointer;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          transition: all 0.3s ease;
-          color: #6c757d;
-        }
-        
-        .role-tab:hover {
-          background-color: #e9ecef;
-        }
-        
-        .role-tab.active {
-          background-color: white;
-          color: #1a2a6c;
-          border-bottom: 3px solid #1a2a6c;
-        }
-        
-        .role-tab i {
-          margin-bottom: 5px;
-          font-size: 18px;
-        }
-        
-        .role-tab span {
-          font-size: 12px;
-        }
-        
-        .login-form {
-          padding: 25px;
-        }
-        
-        .form-group {
-          margin-bottom: 20px;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 8px;
-          font-weight: 500;
-          color: #495057;
-        }
-        
-        .form-group input,
-        .form-group select {
-          width: 100%;
-          padding: 12px;
-          border: 1px solid #ced4da;
-          border-radius: 5px;
-          font-size: 16px;
-          transition: border-color 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus {
-          border-color: #1a2a6c;
-          outline: none;
-          box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.1);
-        }
-        
-        .login-button {
-          width: 100%;
-          padding: 12px;
-          background-color: #1a2a6c;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-        }
-        
-        .login-button:hover {
-          background-color: #152054;
-        }
-        
-        .login-button:disabled {
-          background-color: #6c757d;
-          cursor: not-allowed;
-        }
-        
-        .loading-spinner {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        .spinner {
-          width: 20px;
-          height: 20px;
-          border: 3px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          border-top-color: white;
-          animation: spin 1s ease-in-out infinite;
-          margin-right: 10px;
-        }
-        
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+   
     </div>
+  </Container>
   </Container>
   );
 };
