@@ -215,7 +215,11 @@ body {
   margin-right: 76px;/* Or 'list-item' if it's an <li> element */
 }
  
-
+@media (max-width: 767px) {
+    .login-container {
+        min-height: auto !important; /* Resets the min-height to its natural value */
+    }
+}
 
 /* 2. Media Query for Desktop and larger screens: Hide the element */
 @media (min-width: 569px) {
@@ -223,6 +227,7 @@ body {
     display: none;
    
   }
+ 
    .login-btn{
 font-size: 10px !important;
   }
