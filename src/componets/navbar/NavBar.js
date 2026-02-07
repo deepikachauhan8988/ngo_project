@@ -70,6 +70,9 @@ function NavBar() {
               {/* <img src={EventLogo} alt="logo" className="logo-wecd" /> */}
               <h1 className="sitename">Demo NGO</h1>
             </Link>
+            <li className="mobile-only-login">
+  <Button as={Link} to="/Login" variant="primary" className="login-btn">Login</Button>
+</li>
             <nav id="navmenu" className={`navmenu ${isMenuOpen ? 'navmenu-active' : ''}`}>
               <ul>
                 {/* --- CHANGE 2: Added onClick to close menu on link click --- */}

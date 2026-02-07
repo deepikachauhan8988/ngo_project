@@ -209,7 +209,24 @@ body {
   border-radius: 50%;
   margin-top: -22px; /* Center the button vertically */
 }
+/* 1. Default for Mobile: Show the element */
+.mobile-only-login {
+  display: block;
+  margin-right: 76px;/* Or 'list-item' if it's an <li> element */
+}
+ 
 
+
+/* 2. Media Query for Desktop and larger screens: Hide the element */
+@media (min-width: 569px) {
+  .mobile-only-login {
+    display: none;
+   
+  }
+   .login-btn{
+font-size: 10px !important;
+  }
+}
 .testimonial-slider .swiper-button-prev::after,
 .testimonial-slider .swiper-button-next::after {
   font-size: 20px; /* Adjust arrow size */
@@ -235,6 +252,12 @@ body {
     left: 50% !important;
    
 }
+/* Hide the element on desktop and larger screens */
+
+
+/* Show the element only on mobile screens (768px and smaller) */
+
+
 }
 /* 媒体查询：仅在移动视图中显示为 flex */
 @media (max-width: 768px) {
