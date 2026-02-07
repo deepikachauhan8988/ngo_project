@@ -33,33 +33,39 @@ function NavBar() {
             <i className="bi bi-envelope-fill d-flex align-items-center ms-4 mx-3"><span className='mx-1'> admin@ngo.in</span></i>
             <i className="bi bi-phone d-flex align-items-center"><span className='mx-1'>+91-9876543210</span></i>
           </div> 
-          <div className='social-links d-none d-md-flex align-items-center'>
-            <ul className="event-social-link">
-              <li>
-                <Link to="#" data-discover="true">
-                  <FaFacebook className="social-icon facebook-icon" />
-                </Link>
-              </li>
-              <li>
-                <Link to="#" data-discover="true">
-                  <FaTwitter className="social-icon twitter-icon" />
-                </Link>
-              </li>
-              <li>
-                <Link to="#" data-discover="true">
-                  <FaWhatsapp className="social-icon whatsapp-icon" />
-                </Link>
-              </li>
-              <li>
-                <Link to="#" className="text-light" data-discover="true">
-                  <FaInstagram className="social-icon instagram-icon" />
-                </Link>
-              </li>
-            </ul>
-            <ul>
-              <li><Button as={Link} to="/Login" variant="primary" className="login-btn">Login</Button></li>
-            </ul>
-          </div>
+         <div className='social-links d-none d-md-flex justify-content-center align-items-center'>
+  <ul className="list-unstyled d-flex align-items-center mb-0">
+    {/* Social Media Links */}
+    <li>
+      <Link to="#"className="text-light mx-1" data-discover="true" aria-label="Facebook">
+        <FaFacebook className="social-icon facebook-icon" />
+      </Link>
+    </li>
+    <li>
+      <Link to="#" className="text-light mx-1" data-discover="true" aria-label="Twitter">
+        <FaTwitter className="social-icon twitter-icon" />
+      </Link>
+    </li>
+    <li>
+      <Link to="#" className="text-light mx-1" data-discover="true" aria-label="Whatsapp">
+        <FaWhatsapp className="social-icon whatsapp-icon" />
+      </Link>
+    </li>
+    <li>
+      <Link to="#" className="text-light mx-1" data-discover="true" aria-label="Instagram">
+        <FaInstagram className="social-icon instagram-icon" />
+      </Link>
+    </li>
+    
+    {/* Spacer between icons and button */}
+    <li className="mx-3 text-light">|</li>
+    
+    {/* Login Button */}
+    <li>
+      <Button as={Link} to="/Login" variant="primary" className="login-btn">Login</Button>
+    </li>
+  </ul>
+</div>
         </Container>
       </div>
       
@@ -110,7 +116,7 @@ function NavBar() {
 
                 <li><Link to="/AssociatedWings" onClick={() => setIsMenuOpen(false)}>Associated Wings</Link></li>
                 <li><Link to="/ContactUs" onClick={() => setIsMenuOpen(false)}>Contact</Link></li>
-                <li><Link to="/FeedbackPage" onClick={() => setIsMenuOpen(false)}>FeedBack</Link></li>
+               
               </ul>
               <i
                 className={`mobile-nav-toggle d-xl-none bi ${isMenuOpen ? 'bi-x' : 'bi-list'}`}

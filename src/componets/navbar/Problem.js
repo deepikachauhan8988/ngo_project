@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
-const ProblemReport = () => {
+const Problem = () => {
     // State for all form fields
     const [formData, setFormData] = useState({
         full_name: '',
+        email: '',
+        phone: '',
         problem_nature: '',
         department: '',
         description: '',
         district: '',
         remark: '',
+        report_image: null,
     });
 
     // State for form submission
@@ -18,6 +21,7 @@ const ProblemReport = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState(null);
     const [problemId, setProblemId] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
 
     // Handle input changes
     const handleChange = (e) => {
@@ -33,6 +37,52 @@ const ProblemReport = () => {
             });
 
             // Clear error when user starts typing
+            if (errors[name]) {
+                setErrors({
+                    ...errors,
+                    [name]: null,
+                });
+            }
+            return;
+        }
+        
+        // Special handling for phone to only allow numbers
+        if (name === 'phone') {
+            // Remove any non-numeric characters
+            const numericOnlyValue = value.replace(/[^0-9]/g, '');
+            setFormData({
+                ...formData,
+                [name]: numericOnlyValue,
+            });
+
+            // Clear error when user starts typing
+            if (errors[name]) {
+                setErrors({
+                    ...errors,
+                    [name]: null,
+                });
+            }
+            return;
+        }
+        
+        // Special handling for image file
+        if (name === 'report_image') {
+            const file = e.target.files[0];
+            if (file) {
+                setFormData({
+                    ...formData,
+                    [name]: file,
+                });
+
+                // Create preview for the image
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Clear error when user selects a file
             if (errors[name]) {
                 setErrors({
                     ...errors,
@@ -70,6 +120,20 @@ const ProblemReport = () => {
             newErrors.full_name = 'Full name should contain only alphabets';
         }
 
+        // Email validation
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address';
+        }
+
+        // Phone validation
+        if (!formData.phone.trim()) {
+            newErrors.phone = 'Phone number is required';
+        } else if (!/^[0-9]{10}$/.test(formData.phone)) {
+            newErrors.phone = 'Phone number must be exactly 10 digits';
+        }
+
         // Problem Nature validation
         if (!formData.problem_nature.trim()) {
             newErrors.problem_nature = 'Problem nature is required';
@@ -92,6 +156,8 @@ const ProblemReport = () => {
             newErrors.district = 'District is required';
         }
 
+       
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -110,12 +176,15 @@ const ProblemReport = () => {
 
                 // Add all form fields to FormData
                 data.append('full_name', formData.full_name);
+                data.append('email', formData.email);
+                data.append('phone', formData.phone);
                 data.append('problem_nature', formData.problem_nature);
                 data.append('department', formData.department);
                 data.append('description', formData.description);
                 data.append('district', formData.district);
-                if (formData.remark.trim()) {
-                    data.append('remark', formData.remark);
+                
+                if (formData.report_image) {
+                    data.append('report_image', formData.report_image);
                 }
 
                 // Log the form data for debugging
@@ -147,12 +216,16 @@ const ProblemReport = () => {
                         setTimeout(() => {
                             setFormData({
                                 full_name: '',
+                                email: '',
+                                phone: '',
                                 problem_nature: '',
                                 department: '',
                                 description: '',
                                 district: '',
                                 remark: '',
+                                report_image: null,
                             });
+                            setImagePreview(null);
                             setSubmitted(false);
                             setProblemId(null);
                         }, 5000);
@@ -199,7 +272,7 @@ const ProblemReport = () => {
 
     return (
         <div className="container border rounded-3 shadow-lg p-4 bg-white mt-2">
-            <h1 className="text-center mb-4">Report a Problem</h1>
+            <h1 className="text-center mb-4">Submit your Query</h1>
             {submitted ? (
                 <Alert variant="success" className="text-center">
                     <Alert.Heading>Problem Report Submitted Successfully!</Alert.Heading>
@@ -220,7 +293,7 @@ const ProblemReport = () => {
                     )}
 
                     <Row className="mb-3">
-                        <Col sm={12}>
+                        <Col sm={4}>
                             <Form.Group controlId="full_name">
                                 <Form.Label>
                                     Full Name <span className="text-danger">*</span>
@@ -244,10 +317,56 @@ const ProblemReport = () => {
                                 </Form.Text>
                             </Form.Group>
                         </Col>
+                        <Col sm={4}>
+                            <Form.Group controlId="email">
+                                <Form.Label>
+                                    Email <span className="text-danger">*</span>
+                                </Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    isInvalid={!!errors.email}
+                                    required
+                                    aria-required="true"
+                                    aria-describedby="email-error"
+                                    placeholder="Enter Your Email"
+                                />
+                                <Form.Control.Feedback type="invalid" id="email-error">
+                                    {errors.email}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                        <Col sm={4}>
+                            <Form.Group controlId="phone">
+                                <Form.Label>
+                                    Phone Number <span className="text-danger">*</span>
+                                </Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    isInvalid={!!errors.phone}
+                                    required
+                                    aria-required="true"
+                                    aria-describedby="phone-error"
+                                    placeholder="Enter 10-digit Phone Number"
+                                    maxLength="10"
+                                />
+                                <Form.Control.Feedback type="invalid" id="phone-error">
+                                    {errors.phone}
+                                </Form.Control.Feedback>
+                                <Form.Text id="phone-help" muted>
+                                    Only 10 digits are allowed
+                                </Form.Text>
+                            </Form.Group>
+                        </Col>
                     </Row>
 
                     <Row className="mb-3">
-                        <Col sm={6}>
+                        <Col sm={4}>
                             <Form.Group controlId="problem_nature">
                                 <Form.Label>
                                     Nature of Problem <span className="text-danger">*</span>
@@ -268,7 +387,7 @@ const ProblemReport = () => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                        <Col sm={6}>
+                        <Col sm={4}>
                             <Form.Group controlId="department">
                                 <Form.Label>
                                     Department <span className="text-danger">*</span>
@@ -289,35 +408,7 @@ const ProblemReport = () => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                    </Row>
-
-                    <Row className="mb-3">
-                        <Col sm={12}>
-                            <Form.Group controlId="description">
-                                <Form.Label>
-                                    Problem Description <span className="text-danger">*</span>
-                                </Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    rows="4"
-                                    isInvalid={!!errors.description}
-                                    required
-                                    aria-required="true"
-                                    aria-describedby="description-error"
-                                    placeholder="Please provide a detailed description of the problem..."
-                                />
-                                <Form.Control.Feedback type="invalid" id="description-error">
-                                    {errors.description}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-
-                    <Row className="mb-3">
-                        <Col sm={6}>
+                        <Col sm={4}>
                             <Form.Group controlId="district">
                                 <Form.Label>
                                     District <span className="text-danger">*</span>
@@ -341,8 +432,59 @@ const ProblemReport = () => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                       
                     </Row>
+
+                    <Row className="mb-3">
+                        <Col sm={6}>
+                            <Form.Group controlId="description">
+                                <Form.Label>
+                                    Problem Description <span className="text-danger">*</span>
+                                </Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows="4"
+                                    isInvalid={!!errors.description}
+                                    required
+                                    aria-required="true"
+                                    aria-describedby="description-error"
+                                    placeholder="Please provide a detailed description of the problem..."
+                                />
+                                <Form.Control.Feedback type="invalid" id="description-error">
+                                    {errors.description}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                          <Col sm={6}>
+                            <Form.Group controlId="report_image">
+                                <Form.Label>
+                                    Report Image 
+                                </Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="report_image"
+                                    onChange={handleChange}
+                                    isInvalid={!!errors.report_image}
+                                    required
+                                    aria-required="true"
+                                    aria-describedby="report_image-error"
+                                    accept="image/*"
+                                />
+                                <Form.Control.Feedback type="invalid" id="report_image-error">
+                                    {errors.report_image}
+                                </Form.Control.Feedback>
+                                {imagePreview && (
+                                    <div className="mt-2">
+                                        <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', height: 'auto', maxHeight: '150px' }} />
+                                    </div>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                 
 
                     <Row className="mt-4">
                         <Col sm={12} className="text-center">
@@ -366,7 +508,7 @@ const ProblemReport = () => {
                                         <span className="ms-2">Submitting...</span>
                                     </>
                                 ) : (
-                                    'Submit Report'
+                                    'Submit Query'
                                 )}
                             </Button>
                         </Col>
@@ -377,4 +519,4 @@ const ProblemReport = () => {
     );
 };
 
-export default ProblemReport;
+export default Problem;

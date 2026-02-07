@@ -226,7 +226,7 @@ function EventCarousel() {
           onClick={() => navigate('/Problem')}
         >
             <span className="btn-icon">📝</span>
-           Report Issue
+          Help desk
         </button>
       </div>
       

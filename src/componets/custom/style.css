@@ -33,8 +33,18 @@
 .br-span-star{
   color: red;
 }
+.form-select{
+  font-size: 12px;
+}
+.reg-text h1{
+  font-size: 18px;
+  color: #0d77cb;
+  text-align: center;
+  font-weight: 600;
+}
 .form-control{
   font-size: 10px;
+  height: 40px;
 }
 .form-check-input{
   border: 1px solid black !important;
@@ -186,6 +196,7 @@ body {
   background-color: #ffff !important;
   border: 1px solid #ffff  !important;
   color: #000000;
+  margin-bottom: 8px;
    margin-top: 8px !important;
 }
 .table-responsive-container {
