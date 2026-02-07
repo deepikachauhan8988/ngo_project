@@ -79,10 +79,10 @@
 }
 
 .dashboard-table thead th {
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
+  background-color: #2575fc;
+  border-bottom: 2px solid #fff;
   font-weight: 600;
-  color: #495057;
+  color: #fff;
   padding: 1rem;
   position: sticky;
   top: 0;
