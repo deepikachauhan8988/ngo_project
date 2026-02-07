@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, Alert, Row, Col, Card } from "react-bootstrap";
+import { Container, Form, Button, Alert, Row, Col, Card, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import LeftNav from "../../LeftNav";
 import DashBoardHeader from "../../DashBoardHeader";
-import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle, FaSave } from "react-icons/fa";
+import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle, FaSave, FaGlobe } from "react-icons/fa";
 import { useAuthFetch } from "../../../context/AuthFetch";
 
 const AddActivity = () => {
@@ -18,6 +18,7 @@ const AddActivity = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [imageError, setImageError] = useState(null);
+  const [language, setLanguage] = useState('en'); // 'en' for English, 'hi' for Hindi
 
   // Function to format file size to KB
   const formatFileSize = (bytes) => {
@@ -28,21 +29,162 @@ const AddActivity = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Translations for English and Hindi
+  const translations = {
+    en: {
+      pageTitle: "Add New Activity",
+      pageSubtitle: "Create a new activity for your organization",
+      activityName: "Activity Name",
+      venue: "Venue",
+      dateTime: "Date & Time",
+      activityFee: "Activity Fee",
+      activityImage: "Activity Image",
+      allocatedDistrict: "Allocated District",
+      objective: "Objective",
+      activityStatus: "Activity Status",
+      imageNote: "Upload an image between 50KB and 100KB (optional)",
+      fileSize: "File size:",
+      selectDistrict: "Select District",
+      enterActivityName: "Enter activity name",
+      enterVenue: "Enter activity venue",
+      selectFutureDateTime: "Select a future date and time for the activity",
+      enterActivityFee: "Enter activity fee",
+      feeNote: "Enter the base fee for the activity (other charges will be calculated automatically)",
+      enterObjective: "Enter activity objective",
+      objectiveNote: "Provide a detailed objective of the activity (minimum 10 characters)",
+      statusNote: "Automatically calculated based on the activity date and time",
+      districtNote: "Select the district where the activity will be conducted",
+      createActivity: "Create Activity",
+      creating: "Creating...",
+      cancel: "Cancel",
+      previewTitle: "Activity Preview",
+      name: "Name",
+      notSpecified: "Not specified",
+      status: "Status",
+      district: "District",
+      dateAndTime: "Date & Time",
+      activityFeeLabel: "Activity Fee",
+      imagePreviewLabel: "Image Preview",
+      note: "Note: Portal charges, transaction charges, tax, and total amount will be calculated by the system",
+      past: "Past",
+      ongoing: "Ongoing",
+      upcoming: "Upcoming",
+      notSet: "Not Set",
+      required: "is required",
+      invalid: "is invalid",
+      activityNameRequired: "Activity name is required",
+      objectiveRequired: "Objective is required",
+      objectiveMinChars: "Objective must be at least 10 characters",
+      dateTimeRequired: "Activity date and time is required",
+      dateTimePast: "Activity date cannot be in the past",
+      venueRequired: "Venue is required",
+      feeRequired: "Valid activity fee is required",
+      districtRequired: "District is required",
+      imageSizeError: "Image size must be between 50KB and 100KB.",
+      submitError: "Failed to create activity. Please try again.",
+      networkError: "Network error. Please check your connection and try again.",
+      successMessage: "Activity created successfully!",
+      haridwar: "Haridwar",
+      dehradun: "Dehradun",
+      uttarkashi: "Uttarkashi",
+      chamoli: "Chamoli",
+      rudraprayag: "Rudraprayag",
+      tehriGarhwal: "Tehri Garhwal",
+      pauriGarhwal: "Pauri Garhwal",
+      nainital: "Nainital",
+      almora: "Almora",
+      pithoragarh: "Pithoragarh",
+      udhamSinghNagar: "Udham Singh Nagar",
+      bageshwar: "Bageshwar",
+      champawat: "Champawat"
+    },
+    hi: {
+      pageTitle: "नई गतिविधि जोड़ें",
+      pageSubtitle: "अपने संगठन के लिए एक नई गतिविधि बनाएं",
+      activityName: "गतिविधि का नाम",
+      venue: "स्थान",
+      dateTime: "दिनांक और समय",
+      activityFee: "गतिविधि शुल्क",
+      activityImage: "गतिविधि चित्र",
+      allocatedDistrict: "आवंटित जिला",
+      objective: "उद्देश्य",
+      activityStatus: "गतिविधि स्थिति",
+      imageNote: "50KB से 100KB के बीच एक चित्र अपलोड करें (वैकल्पिक)",
+      fileSize: "फाइल आकार:",
+      selectDistrict: "जिला चुनें",
+      enterActivityName: "गतिविधि का नाम दर्ज करें",
+      enterVenue: "गतिविधि स्थान दर्ज करें",
+      selectFutureDateTime: "गतिविधि के लिए एक भविष्य की तिथि और समय चुनें",
+      enterActivityFee: "गतिविधि शुल्क दर्ज करें",
+      feeNote: "गतिविधि के लिए आधार शुल्क दर्ज करें (अन्य शुल्क स्वचालित रूप से गणना किए जाएंगे)",
+      enterObjective: "गतिविधि उद्देश्य दर्ज करें",
+      objectiveNote: "गतिविधि का विस्तृत उद्देश्य प्रदान करें (न्यूनतम 10 अक्षर)",
+      statusNote: "गतिविधि दिनांक और समय के आधार पर स्वचालित रूप से गणना की गई",
+      districtNote: "वह जिला चुनें जहां गतिविधि का आयोजन किया जाएगा",
+      createActivity: "गतिविधि बनाएं",
+      creating: "बनाया जा रहा है...",
+      cancel: "रद्द करें",
+      previewTitle: "गतिविधि पूर्वावलोकन",
+      name: "नाम",
+      notSpecified: "निर्दिष्ट नहीं",
+      status: "स्थिति",
+      district: "जिला",
+      dateAndTime: "दिनांक और समय",
+      activityFeeLabel: "गतिविधि शुल्क",
+      imagePreviewLabel: "चित्र पूर्वावलोकन",
+      note: "नोट: पोर्टल शुल्क, लेनदेन शुल्क, कर, और कुल राशि की गणना सिस्टम द्वारा की जाएगी",
+      past: "भूत",
+      ongoing: "चालू",
+      upcoming: "आगामी",
+      notSet: "सेट नहीं",
+      required: "आवश्यक है",
+      invalid: "अमान्य है",
+      activityNameRequired: "गतिविधि का नाम आवश्यक है",
+      objectiveRequired: "उद्देश्य आवश्यक है",
+      objectiveMinChars: "उद्देश्य कम से कम 10 अक्षर का होना चाहिए",
+      dateTimeRequired: "गतिविधि दिनांक और समय आवश्यक है",
+      dateTimePast: "गतिविधि दिनांक भूतकाल में नहीं हो सकता",
+      venueRequired: "स्थान आवश्यक है",
+      feeRequired: "वैध गतिविधि शुल्क आवश्यक है",
+      districtRequired: "जिला आवश्यक है",
+      imageSizeError: "चित्र का आकार 50KB से 100KB के बीच होना चाहिए।",
+      submitError: "गतिविधि बनाने में विफल। कृपया फिर से कोशिश करें।",
+      networkError: "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें और फिर से कोशिश करें।",
+      successMessage: "गतिविधि सफलतापूर्वक बनाई गई!",
+      haridwar: "हरिद्वार",
+      dehradun: "देहरादून",
+      uttarkashi: "उत्तरकाशी",
+      chamoli: "चमोली",
+      rudraprayag: "रुद्रप्रयाग",
+      tehriGarhwal: "टिहरी गढ़वाल",
+      pauriGarhwal: "पौड़ी गढ़वाल",
+      nainital: "नैनीताल",
+      almora: "अल्मोड़ा",
+      pithoragarh: "पिथौरागढ़",
+      udhamSinghNagar: "उधम सिंह नगर",
+      bageshwar: "बागेश्वर",
+      champawat: "चंपावत"
+    }
+  };
+  
+  // Get current language translations
+  const t = translations[language];
+
   // District options for dropdown
   const districtOptions = [
-    { value: "haridwar", label: "Haridwar" },
-    { value: "dehradun", label: "Dehradun" },
-    { value: "uttarkashi", label: "Uttarkashi" },
-    { value: "chamoli", label: "Chamoli" },
-    { value: "rudraprayag", label: "Rudraprayag" },
-    { value: "tehri_garhwal", label: "Tehri Garhwal" },
-    { value: "pauri_garhwal", label: "Pauri Garhwal" },
-    { value: "nainital", label: "Nainital" },
-    { value: "almora", label: "Almora" },
-    { value: "pithoragarh", label: "Pithoragarh" },
-    { value: "udham_singh_nagar", label: "Udham Singh Nagar" },
-    { value: "bageshwar", label: "Bageshwar" },
-    { value: "champawat", label: "Champawat" }
+    { value: "haridwar", label: t.haridwar },
+    { value: "dehradun", label: t.dehradun },
+    { value: "uttarkashi", label: t.uttarkashi },
+    { value: "chamoli", label: t.chamoli },
+    { value: "rudraprayag", label: t.rudraprayag },
+    { value: "tehri_garhwal", label: t.tehriGarhwal },
+    { value: "pauri_garhwal", label: t.pauriGarhwal },
+    { value: "nainital", label: t.nainital },
+    { value: "almora", label: t.almora },
+    { value: "pithoragarh", label: t.pithoragarh },
+    { value: "udham_singh_nagar", label: t.udhamSinghNagar },
+    { value: "bageshwar", label: t.bageshwar },
+    { value: "champawat", label: t.champawat }
   ];
 
   // Form state
@@ -134,7 +276,7 @@ const AddActivity = () => {
       const fileSizeKB = file.size / 1024;
       
       if (fileSizeKB < 50 || fileSizeKB > 100) {
-        setImageError(`Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`);
+        setImageError(`${t.imageSizeError} ${t.fileSize} ${formatFileSize(file.size)}.`);
         // Clear the image preview if the size is invalid
         setImagePreview(null);
         // Clear the image file
@@ -161,35 +303,35 @@ const AddActivity = () => {
     const errors = {};
     
     if (!formData.activity_name.trim()) {
-      errors.activity_name = "Activity name is required";
+      errors.activity_name = t.activityNameRequired;
     }
     
     if (!formData.objective.trim()) {
-      errors.objective = "Objective is required";
+      errors.objective = t.objectiveRequired;
     } else if (formData.objective.length < 10) {
-      errors.objective = "Objective must be at least 10 characters";
+      errors.objective = t.objectiveMinChars;
     }
     
     if (!formData.activity_date_time) {
-      errors.activity_date_time = "Activity date and time is required";
+      errors.activity_date_time = t.dateTimeRequired;
     } else {
       const selectedDate = new Date(formData.activity_date_time);
       const now = new Date();
       if (selectedDate < now) {
-        errors.activity_date_time = "Activity date cannot be in the past";
+        errors.activity_date_time = t.dateTimePast;
       }
     }
     
     if (!formData.venue.trim()) {
-      errors.venue = "Venue is required";
+      errors.venue = t.venueRequired;
     }
     
     if (!formData.activity_fee || isNaN(formData.activity_fee) || parseFloat(formData.activity_fee) <= 0) {
-      errors.activity_fee = "Valid activity fee is required";
+      errors.activity_fee = t.feeRequired;
     }
     
     if (!formData.allocated_district) {
-      errors.allocated_district = "District is required";
+      errors.allocated_district = t.districtRequired;
     }
     
     // Check for image validation errors
@@ -233,18 +375,25 @@ const AddActivity = () => {
       submitData.append('is_present', activityStatus.is_present);
       submitData.append('is_upcoming', activityStatus.is_upcoming);
       
-      const response = await authFetch(
-        'https://mahadevaaya.com/ngoproject/ngoproject_backend/api/activity-items/',
-        {
-          method: 'POST',
-          body: submitData
-        }
-      );
+      // Different API endpoints based on language
+      let apiUrl;
+      if (language === 'en') {
+        // English API endpoint (actual endpoint)
+        apiUrl = 'https://mahadevaaya.com/ngoproject/ngoproject_backend/api/activity-items/';
+      } else {
+        // Hindi API endpoint (dummy for now)
+        apiUrl = 'https://dummy-api-for-hindi.com/ngoproject/ngoproject_backend/api/activity-items-hindi/';
+      }
+      
+      const response = await authFetch(apiUrl, {
+        method: 'POST',
+        body: submitData
+      });
       
       const data = await response.json();
       
       if (response.ok) {
-        setSuccess("Activity created successfully!");
+        setSuccess(t.successMessage);
         // Reset form
         setFormData({
           activity_name: "",
@@ -272,10 +421,10 @@ const AddActivity = () => {
           navigate('/ManageActivity'); // or your activities list page
         }, 2000);
       } else {
-        setError(data.message || "Failed to create activity. Please try again.");
+        setError(data.message || t.submitError);
       }
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
+      setError(t.networkError);
       console.error('Error creating activity:', err);
     } finally {
       setLoading(false);
@@ -296,13 +445,13 @@ const AddActivity = () => {
   // Get status badge component
   const getStatusBadge = () => {
     if (activityStatus.is_past) {
-      return <span className="badge bg-secondary">Past</span>;
+      return <span className="badge bg-secondary">{t.past}</span>;
     } else if (activityStatus.is_present) {
-      return <span className="badge bg-success">Ongoing</span>;
+      return <span className="badge bg-success">{t.ongoing}</span>;
     } else if (activityStatus.is_upcoming) {
-      return <span className="badge bg-primary">Upcoming</span>;
+      return <span className="badge bg-primary">{t.upcoming}</span>;
     }
-    return <span className="badge bg-secondary">Not Set</span>;
+    return <span className="badge bg-secondary">{t.notSet}</span>;
   };
 
   // Get district label by value
@@ -329,8 +478,20 @@ const AddActivity = () => {
           <Container fluid className="dashboard-body dashboard-main-container py-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
-                <h1 className="page-title mb-1">Add New Activity</h1>
-                <p className="text-muted mb-0">Create a new activity for your organization</p>
+                <h1 className="page-title mb-1">{t.pageTitle}</h1>
+                <p className="text-muted mb-0">{t.pageSubtitle}</p>
+              </div>
+              
+              {/* Language Toggle */}
+              <div className="language-toggle">
+                <ToggleButtonGroup type="radio" name="language" value={language} onChange={(val) => setLanguage(val)}>
+                  <ToggleButton id="lang-en" value="en" variant={language === 'en' ? 'primary' : 'outline-primary'}>
+                    English
+                  </ToggleButton>
+                  <ToggleButton id="lang-hi" value="hi" variant={language === 'hi' ? 'primary' : 'outline-primary'}>
+                    हिंदी
+                  </ToggleButton>
+                </ToggleButtonGroup>
               </div>
             </div>
 
@@ -357,14 +518,14 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaInfoCircle className="me-2 text-primary" />
-                          Activity Name <span className="text-danger ms-1">*</span>
+                          {t.activityName} <span className="text-danger ms-1">*</span>
                         </Form.Label>
                         <Form.Control
                           type="text"
                           name="activity_name"
                           value={formData.activity_name}
                           onChange={handleChange}
-                          placeholder="Enter activity name"
+                          placeholder={t.enterActivityName}
                           isInvalid={!!validationErrors.activity_name}
                           className="form-control-lg"
                         />
@@ -379,14 +540,14 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaMapMarkerAlt className="me-2 text-danger" />
-                          Venue <span className="text-danger ms-1">*</span>
+                          {t.venue} <span className="text-danger ms-1">*</span>
                         </Form.Label>
                         <Form.Control
                           type="text"
                           name="venue"
                           value={formData.venue}
                           onChange={handleChange}
-                          placeholder="Enter activity venue"
+                          placeholder={t.enterVenue}
                           isInvalid={!!validationErrors.venue}
                           className="form-control-lg"
                         />
@@ -403,7 +564,7 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaCalendarAlt className="me-2 text-success" />
-                          Date & Time <span className="text-danger ms-1">*</span>
+                          {t.dateTime} <span className="text-danger ms-1">*</span>
                         </Form.Label>
                         <Form.Control
                           type="datetime-local"
@@ -418,7 +579,7 @@ const AddActivity = () => {
                           {validationErrors.activity_date_time}
                         </Form.Control.Feedback>
                         <Form.Text className="text-muted">
-                          Select a future date and time for the activity
+                          {t.selectFutureDateTime}
                         </Form.Text>
                       </Form.Group>
                     </Col>
@@ -428,14 +589,14 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaInfoCircle className="me-2 text-info" />
-                          Activity Fee <span className="text-danger ms-1">*</span>
+                          {t.activityFee} <span className="text-danger ms-1">*</span>
                         </Form.Label>
                         <Form.Control
                           type="number"
                           name="activity_fee"
                           value={formData.activity_fee}
                           onChange={handleChange}
-                          placeholder="Enter activity fee"
+                          placeholder={t.enterActivityFee}
                           step="0.01"
                           min="0"
                           isInvalid={!!validationErrors.activity_fee}
@@ -445,7 +606,7 @@ const AddActivity = () => {
                           {validationErrors.activity_fee}
                         </Form.Control.Feedback>
                         <Form.Text className="text-muted">
-                          Enter the base fee for the activity (other charges will be calculated automatically)
+                          {t.feeNote}
                         </Form.Text>
                       </Form.Group>
                     </Col>
@@ -457,7 +618,7 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaInfoCircle className="me-2 text-info" />
-                          Activity Image
+                          {t.activityImage}
                         </Form.Label>
                         <Form.Control
                           type="file"
@@ -468,7 +629,7 @@ const AddActivity = () => {
                           isInvalid={!!validationErrors.image}
                         />
                         <Form.Text className="text-muted">
-                          Upload an image between 50KB and 100KB (optional)
+                          {t.imageNote}
                         </Form.Text>
                         {imageError && (
                           <div className="text-danger mt-1">{imageError}</div>
@@ -483,7 +644,7 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaMapMarkerAlt className="me-2 text-danger" />
-                          Allocated District <span className="text-danger ms-1">*</span>
+                          {t.allocatedDistrict} <span className="text-danger ms-1">*</span>
                         </Form.Label>
                         <Form.Select
                           name="allocated_district"
@@ -492,7 +653,7 @@ const AddActivity = () => {
                           isInvalid={!!validationErrors.allocated_district}
                           className="form-control-lg"
                         >
-                          <option value="">Select District</option>
+                          <option value="">{t.selectDistrict}</option>
                           {districtOptions.map((district) => (
                             <option key={district.value} value={district.value}>
                               {district.label}
@@ -503,7 +664,7 @@ const AddActivity = () => {
                           {validationErrors.allocated_district}
                         </Form.Control.Feedback>
                         <Form.Text className="text-muted">
-                          Select the district where the activity will be conducted
+                          {t.districtNote}
                         </Form.Text>
                       </Form.Group>
                     </Col>
@@ -515,14 +676,14 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaInfoCircle className="me-2 text-info" />
-                          Objective <span className="text-danger ms-1">*</span>
+                          {t.objective} <span className="text-danger ms-1">*</span>
                         </Form.Label>
                         <Form.Control
                           as="textarea"
                           name="objective"
                           value={formData.objective}
                           onChange={handleChange}
-                          placeholder="Enter activity objective"
+                          placeholder={t.enterObjective}
                           rows={4}
                           isInvalid={!!validationErrors.objective}
                           className="form-control-lg"
@@ -531,7 +692,7 @@ const AddActivity = () => {
                           {validationErrors.objective}
                         </Form.Control.Feedback>
                         <Form.Text className="text-muted">
-                          Provide a detailed objective of the activity (minimum 10 characters)
+                          {t.objectiveNote}
                         </Form.Text>
                       </Form.Group>
                     </Col>
@@ -543,12 +704,12 @@ const AddActivity = () => {
                       <Form.Group>
                         <Form.Label className="d-flex align-items-center">
                           <FaInfoCircle className="me-2 text-warning" />
-                          Activity Status
+                          {t.activityStatus}
                         </Form.Label>
                         <div className="d-flex align-items-center">
                           {getStatusBadge()}
                           <Form.Text className="text-muted ms-2">
-                            Automatically calculated based on the activity date and time
+                            {t.statusNote}
                           </Form.Text>
                         </div>
                       </Form.Group>
@@ -563,7 +724,7 @@ const AddActivity = () => {
                       onClick={() => navigate('/ManageActivity')}
                       disabled={loading}
                     >
-                      Cancel
+                      {t.cancel}
                     </Button>
                     <Button
                       type="submit"
@@ -575,12 +736,12 @@ const AddActivity = () => {
                       {loading ? (
                         <>
                           <span className="spinner-border spinner-border-sm me-2" />
-                          Creating...
+                          {t.creating}
                         </>
                       ) : (
                         <>
                           <FaSave className="me-2" />
-                          Create Activity
+                          {t.createActivity}
                         </>
                       )}
                     </Button>
@@ -593,32 +754,32 @@ const AddActivity = () => {
             {formData.activity_name && (
               <Card className="shadow-sm mt-4">
                 <Card.Header className="bg-light">
-                  <h5 className="mb-0">Activity Preview</h5>
+                  <h5 className="mb-0">{t.previewTitle}</h5>
                 </Card.Header>
                 <Card.Body>
                   <Row>
                     <Col md={6}>
-                      <p><strong>Name:</strong> {formData.activity_name || 'Not specified'}</p>
-                      <p><strong>Venue:</strong> {formData.venue || 'Not specified'}</p>
-                      <p><strong>Status:</strong> {getStatusBadge()}</p>
-                      <p><strong>District:</strong> {formData.allocated_district ? getDistrictLabel(formData.allocated_district) : 'Not specified'}</p>
+                      <p><strong>{t.name}:</strong> {formData.activity_name || t.notSpecified}</p>
+                      <p><strong>{t.venue}:</strong> {formData.venue || t.notSpecified}</p>
+                      <p><strong>{t.status}:</strong> {getStatusBadge()}</p>
+                      <p><strong>{t.district}:</strong> {formData.allocated_district ? getDistrictLabel(formData.allocated_district) : t.notSpecified}</p>
                     </Col>
                     <Col md={6}>
-                      <p><strong>Date & Time:</strong> {formData.activity_date_time ? 
-                        new Date(formData.activity_date_time).toLocaleString() : 'Not specified'}</p>
-                      <p><strong>Objective:</strong> {formData.objective || 'Not specified'}</p>
-                      <p><strong>Activity Fee:</strong> ₹{formData.activity_fee || '0.00'}</p>
-                      <p className="text-muted"><em>Note: Portal charges, transaction charges, tax, and total amount will be calculated by the system</em></p>
+                      <p><strong>{t.dateAndTime}:</strong> {formData.activity_date_time ? 
+                        new Date(formData.activity_date_time).toLocaleString() : t.notSpecified}</p>
+                      <p><strong>{t.objective}:</strong> {formData.objective || t.notSpecified}</p>
+                      <p><strong>{t.activityFeeLabel}:</strong> ₹{formData.activity_fee || '0.00'}</p>
+                      <p className="text-muted"><em>{t.note}</em></p>
                     </Col>
                   </Row>
                   {imagePreview && (
                     <Row className="mt-3">
                       <Col md={12}>
-                        <p><strong>Image Preview:</strong></p>
+                        <p><strong>{t.imagePreviewLabel}:</strong></p>
                         <img src={imagePreview} alt="Activity preview" className="img-fluid" style={{maxHeight: '200px'}} />
                         {imageFile && (
                           <div className="mt-1">
-                            <small className="text-muted">File size: {formatFileSize(imageFile.size)}</small>
+                            <small className="text-muted">{t.fileSize} {formatFileSize(imageFile.size)}</small>
                           </div>
                         )}
                       </Col>

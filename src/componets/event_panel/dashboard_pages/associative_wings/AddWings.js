@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, Row, Col, Card, Alert } from "react-bootstrap";
-import { FaSave, FaTimes } from "react-icons/fa";
+import { Container, Form, Button, Row, Col, Card, Alert, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import { FaSave, FaTimes, FaGlobe } from "react-icons/fa";
 
 import "../../../../assets/css/dashboard.css";
 
@@ -14,6 +14,7 @@ const AddWings = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [language, setLanguage] = useState('en'); // 'en' for English, 'hi' for Hindi
   
   // Function to format file size to KB
   const formatFileSize = (bytes) => {
@@ -23,6 +24,71 @@ const AddWings = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
+  
+  // Translations for English and Hindi
+  const translations = {
+    en: {
+      pageTitle: "Add Wing Details",
+      organizationName: "Organization Name",
+      organizationNamePlaceholder: "Enter organization name",
+      natureOfWork: "Nature Of Work",
+      natureOfWorkPlaceholder: "Enter wing name",
+      contactPerson: "Contact Person Name",
+      contactPersonPlaceholder: "Enter contact person name",
+      email: "Email",
+      emailPlaceholder: "Enter email address",
+      phone: "Phone Number",
+      phonePlaceholder: "Enter phone number",
+      portfolioImage: "Portfolio Image",
+      imageSizeNote: "Upload an image between 50KB and 100KB",
+      address: "Address",
+      addressPlaceholder: "Enter address",
+      shortDescription: "Short Description",
+      shortDescriptionPlaceholder: "Enter short description",
+      cancel: "Cancel",
+      save: "Save Wing",
+      saving: "Saving...",
+      successMessage: "Wing details added successfully!",
+      submitError: "Failed to submit form. Please try again.",
+      imageSizeError: "Image size must be between 50KB and 100KB.",
+      fileSize: "File size:",
+      required: "is required",
+      invalid: "is invalid",
+      phoneDigits: "Phone number should be 10 digits"
+    },
+    hi: {
+      pageTitle: "विंग विवरण जोड़ें",
+      organizationName: "संगठन का नाम",
+      organizationNamePlaceholder: "संगठन का नाम दर्ज करें",
+      natureOfWork: "काम की प्रकृति",
+      natureOfWorkPlaceholder: "विंग का नाम दर्ज करें",
+      contactPerson: "संपर्क व्यक्ति का नाम",
+      contactPersonPlaceholder: "संपर्क व्यक्ति का नाम दर्ज करें",
+      email: "ईमेल",
+      emailPlaceholder: "ईमेल पता दर्ज करें",
+      phone: "फोन नंबर",
+      phonePlaceholder: "फोन नंबर दर्ज करें",
+      portfolioImage: "पोर्टफोलियो चित्र",
+      imageSizeNote: "50KB से 100KB के बीच एक चित्र अपलोड करें",
+      address: "पता",
+      addressPlaceholder: "पता दर्ज करें",
+      shortDescription: "संक्षिप्त विवरण",
+      shortDescriptionPlaceholder: "संक्षिप्त विवरण दर्ज करें",
+      cancel: "रद्द करें",
+      save: "विंग सहेजें",
+      saving: "सहेजा जा रहा है...",
+      successMessage: "विंग विवरण सफलतापूर्वक जोड़ा गया!",
+      submitError: "फॉर्म सबमिट करने में विफल। कृपया फिर से कोशिश करें।",
+      imageSizeError: "चित्र का आकार 50KB से 100KB के बीच होना चाहिए।",
+      fileSize: "फाइल आकार:",
+      required: "आवश्यक है",
+      invalid: "अमान्य है",
+      phoneDigits: "फोन नंबर 10 अंकों का होना चाहिए"
+    }
+  };
+  
+  // Get current language translations
+  const t = translations[language];
   
   // Form state
   const [formData, setFormData] = useState({
@@ -87,7 +153,7 @@ const AddWings = () => {
       const fileSizeKB = file.size / 1024;
       
       if (fileSizeKB < 50 || fileSizeKB > 100) {
-        setImageError(`Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`);
+        setImageError(`${t.imageSizeError} ${t.fileSize} ${formatFileSize(file.size)}.`);
         // Clear the image preview if the size is invalid
         setImagePreview(null);
         // Clear the image from formData
@@ -119,35 +185,35 @@ const AddWings = () => {
     const newErrors = {};
     
     if (!formData.organization_name.trim()) {
-      newErrors.organization_name = "Organization name is required";
+      newErrors.organization_name = `${t.organizationName} ${t.required}`;
     }
     
     if (!formData.native_wing.trim()) {
-      newErrors.native_wing = "Nature of Work is required";
+      newErrors.native_wing = `${t.natureOfWork} ${t.required}`;
     }
     
     if (!formData.short_description.trim()) {
-      newErrors.short_description = "Description is required";
+      newErrors.short_description = `${t.shortDescription} ${t.required}`;
     }
     
     if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
+      newErrors.address = `${t.address} ${t.required}`;
     }
     
     if (!formData.contact_person_name.trim()) {
-      newErrors.contact_person_name = "Contact person name is required";
+      newErrors.contact_person_name = `${t.contactPerson} ${t.required}`;
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = `${t.email} ${t.required}`;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = `${t.email} ${t.invalid}`;
     }
     
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = `${t.phone} ${t.required}`;
     } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
-      newErrors.phone = "Phone number should be 10 digits";
+      newErrors.phone = t.phoneDigits;
     }
     
     // Check for image validation errors
@@ -190,8 +256,18 @@ const AddWings = () => {
         data.append('image', formData.image);
       }
       
+      // Different API endpoints based on language
+      let apiUrl;
+      if (language === 'en') {
+        // English API endpoint (actual endpoint)
+        apiUrl = 'https://mahadevaaya.com/ngoproject/ngoproject_backend/api/associative-wings/';
+      } else {
+        // Hindi API endpoint (dummy for now)
+        apiUrl = 'https://dummy-api-for-hindi.com/ngoproject/ngoproject_backend/api/associative-wings-hindi/';
+      }
+      
       // API call using authFetch
-      const response = await authFetch('https://mahadevaaya.com/ngoproject/ngoproject_backend/api/associative-wings/', {
+      const response = await authFetch(apiUrl, {
         method: 'POST',
         body: data
       });
@@ -203,7 +279,7 @@ const AddWings = () => {
       const result = await response.json();
       console.log('Success:', result);
       
-      setSuccessMessage("Wing details added successfully!");
+      setSuccessMessage(t.successMessage);
       
       // Reset form after successful submission
       setTimeout(() => {
@@ -224,7 +300,7 @@ const AddWings = () => {
       
     } catch (error) {
       console.error('Error submitting form:', error);
-      setErrors({ submit: "Failed to submit form. Please try again." });
+      setErrors({ submit: t.submitError });
     } finally {
       setIsSubmitting(false);
     }
@@ -246,7 +322,21 @@ const AddWings = () => {
           <DashBoardHeader toggleSidebar={toggleSidebar} />
 
           <Container fluid className="dashboard-body dashboard-main-container">
-            <h1 className="page-title">Add Wing Details</h1>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h1 className="page-title">{t.pageTitle}</h1>
+              
+              {/* Language Toggle */}
+              <div className="language-toggle">
+                <ToggleButtonGroup type="radio" name="language" value={language} onChange={(val) => setLanguage(val)}>
+                  <ToggleButton id="lang-en" value="en" variant={language === 'en' ? 'primary' : 'outline-primary'}>
+                    English
+                  </ToggleButton>
+                  <ToggleButton id="lang-hi" value="hi" variant={language === 'hi' ? 'primary' : 'outline-primary'}>
+                    हिंदी
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+            </div>
             
             {successMessage && (
               <Alert variant="success" className="mb-4">
@@ -265,14 +355,14 @@ const AddWings = () => {
                 <Row>
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="organization_name">
-                      <Form.Label>Organization Name</Form.Label>
+                      <Form.Label>{t.organizationName}</Form.Label>
                       <Form.Control
                         type="text"
                         name="organization_name"
                         value={formData.organization_name}
                         onChange={handleInputChange}
                         isInvalid={!!errors.organization_name}
-                        placeholder="Enter organization name"
+                        placeholder={t.organizationNamePlaceholder}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.organization_name}
@@ -282,14 +372,14 @@ const AddWings = () => {
                   
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="native_wing">
-                      <Form.Label>Nature Of Work</Form.Label>
+                      <Form.Label>{t.natureOfWork}</Form.Label>
                       <Form.Control
                         type="text"
                         name="native_wing"
                         value={formData.native_wing}
                         onChange={handleInputChange}
                         isInvalid={!!errors.native_wing}
-                        placeholder="Enter wing name"
+                        placeholder={t.natureOfWorkPlaceholder}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.native_wing}
@@ -301,14 +391,14 @@ const AddWings = () => {
                 <Row>
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="contact_person_name">
-                      <Form.Label>Contact Person Name</Form.Label>
+                      <Form.Label>{t.contactPerson}</Form.Label>
                       <Form.Control
                         type="text"
                         name="contact_person_name"
                         value={formData.contact_person_name}
                         onChange={handleInputChange}
                         isInvalid={!!errors.contact_person_name}
-                        placeholder="Enter contact person name"
+                        placeholder={t.contactPersonPlaceholder}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.contact_person_name}
@@ -318,14 +408,14 @@ const AddWings = () => {
                   
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="email">
-                      <Form.Label>Email</Form.Label>
+                      <Form.Label>{t.email}</Form.Label>
                       <Form.Control
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                         isInvalid={!!errors.email}
-                        placeholder="Enter email address"
+                        placeholder={t.emailPlaceholder}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.email}
@@ -337,14 +427,14 @@ const AddWings = () => {
                 <Row>
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="phone">
-                      <Form.Label>Phone Number</Form.Label>
+                      <Form.Label>{t.phone}</Form.Label>
                       <Form.Control
                         type="text"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
                         isInvalid={!!errors.phone}
-                        placeholder="Enter phone number"
+                        placeholder={t.phonePlaceholder}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.phone}
@@ -354,7 +444,7 @@ const AddWings = () => {
                   
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="image">
-                      <Form.Label>Portfolio Image</Form.Label>
+                      <Form.Label>{t.portfolioImage}</Form.Label>
                       <Form.Control
                         type="file"
                         name="image"
@@ -363,7 +453,7 @@ const AddWings = () => {
                         isInvalid={!!errors.image}
                       />
                       <Form.Text className="text-muted">
-                        Upload an image between 50KB and 100KB
+                        {t.imageSizeNote}
                       </Form.Text>
                       {imageError && (
                         <div className="text-danger mt-1">{imageError}</div>
@@ -380,7 +470,7 @@ const AddWings = () => {
                           />
                           {formData.image && (
                             <div className="mt-1">
-                              <small className="text-muted">File size: {formatFileSize(formData.image.size)}</small>
+                              <small className="text-muted">{t.fileSize} {formatFileSize(formData.image.size)}</small>
                             </div>
                           )}
                         </div>
@@ -390,7 +480,7 @@ const AddWings = () => {
                 </Row>
                 
                 <Form.Group controlId="address" className="mb-3">
-                  <Form.Label>Address</Form.Label>
+                  <Form.Label>{t.address}</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -398,7 +488,7 @@ const AddWings = () => {
                     value={formData.address}
                     onChange={handleInputChange}
                     isInvalid={!!errors.address}
-                    placeholder="Enter address"
+                    placeholder={t.addressPlaceholder}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.address}
@@ -406,7 +496,7 @@ const AddWings = () => {
                 </Form.Group>
                 
                 <Form.Group controlId="short_description" className="mb-4">
-                  <Form.Label>Short Description</Form.Label>
+                  <Form.Label>{t.shortDescription}</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -414,7 +504,7 @@ const AddWings = () => {
                     value={formData.short_description}
                     onChange={handleInputChange}
                     isInvalid={!!errors.short_description}
-                    placeholder="Enter short description"
+                    placeholder={t.shortDescriptionPlaceholder}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.short_description}
@@ -425,9 +515,9 @@ const AddWings = () => {
                   <Button 
                     variant="secondary" 
                     className="me-2"
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate('/DashBoard')}
                   >
-                    <FaTimes className="me-1" /> Cancel
+                    <FaTimes className="me-1" /> {t.cancel}
                   </Button>
                   <Button 
                     variant="primary" 
@@ -436,7 +526,7 @@ const AddWings = () => {
                     className="d-flex align-items-center"
                   >
                     <FaSave className="me-1" /> 
-                    {isSubmitting ? 'Saving...' : 'Save Wing'}
+                    {isSubmitting ? t.saving : t.save}
                   </Button>
                 </div>
               </Form>

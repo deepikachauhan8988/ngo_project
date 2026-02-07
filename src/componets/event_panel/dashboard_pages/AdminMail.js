@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, Row, Col, Card, Alert, Spinner, ListGroup, Badge } from "react-bootstrap";
-import { FaSave, FaTimes, FaEnvelope, FaUsers } from "react-icons/fa";
+import { Container, Form, Button, Row, Col, Card, Alert, Spinner, ListGroup, Badge, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import { FaSave, FaTimes, FaEnvelope, FaUsers, FaGlobe } from "react-icons/fa";
 
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +10,6 @@ import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
 
-
-
 const AdminMail = () => {
   const { auth, logout, refreshAccessToken, isLoading: authLoading, isAuthenticated } = useAuth();
   const authFetch = useAuthFetch();
@@ -19,8 +17,9 @@ const AdminMail = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [language, setLanguage] = useState('en'); // 'en' for English, 'hi' for Hindi
   
-   // Form state
+  // Form state
   const [formData, setFormData] = useState({
     admin_id: "",
     member_ids: [],
@@ -38,6 +37,75 @@ const AdminMail = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Translations for English and Hindi
+  const translations = {
+    en: {
+      pageTitle: "Admin Mail",
+      selectMembers: "Select Members",
+      selectAll: "Select All",
+      deselectAll: "Deselect All",
+      subject: "Subject",
+      message: "Message",
+      enterSubject: "Enter email subject",
+      enterMessage: "Enter your message",
+      sendMail: "Send Mail",
+      sending: "Sending...",
+      cancel: "Cancel",
+      noMembersFound: "No members found for this district.",
+      membersRequired: "Please select at least one member",
+      subjectRequired: "Subject is required",
+      messageRequired: "Message is required",
+      successMessage: "Mail sent successfully!",
+      permissionDenied: "Permission denied. You may not have the required role to access this feature.",
+      authError: "Authentication error. Please login again.",
+      fetchError: "An error occurred while fetching member data",
+      submitError: "Failed to send mail. Please try again.",
+      authenticationRequired: "Authentication Required",
+      needToLogin: "You need to be logged in to view this page.",
+      goToLogin: "Go to Login",
+      loading: "Loading...",
+      fullName: "Full Name",
+      email: "Email",
+      district: "District",
+      id: "ID",
+      na: "N/A"
+    },
+    hi: {
+      pageTitle: "व्यवस्थापक मेल",
+      selectMembers: "सदस्य चुनें",
+      selectAll: "सभी का चयन करें",
+      deselectAll: "सभी का चयन रद्द करें",
+      subject: "विषय",
+      message: "संदेश",
+      enterSubject: "ईमेल विषय दर्ज करें",
+      enterMessage: "अपना संदेश दर्ज करें",
+      sendMail: "मेल भेजें",
+      sending: "भेजा जा रहा है...",
+      cancel: "रद्द करें",
+      noMembersFound: "इस जिले के लिए कोई सदस्य नहीं मिला।",
+      membersRequired: "कृपया कम से कम एक सदस्य चुनें",
+      subjectRequired: "विषय आवश्यक है",
+      messageRequired: "संदेश आवश्यक है",
+      successMessage: "मेल सफलतापूर्वक भेजा गया!",
+      permissionDenied: "अनुमति नहीं। आपके पास इस सुविधा तक पहुंचने के लिए आवश्यक भूमिका नहीं हो सकती है।",
+      authError: "प्रमाणीकरण त्रुटि। कृपया फिर से लॉगिन करें।",
+      fetchError: "सदस्य डेटा लाने में एक त्रुटि हुई",
+      submitError: "मेल भेजने में विफल। कृपया फिर से कोशिश करें।",
+      authenticationRequired: "प्रमाणीकरण आवश्यक",
+      needToLogin: "इस पृष्ठ को देखने के लिए आपको लॉग इन करना होगा।",
+      goToLogin: "लॉगिन पर जाएं",
+      loading: "लोड हो रहा है...",
+      fullName: "पूरा नाम",
+      email: "ईमेल",
+      district: "जिला",
+      id: "आईडी",
+      na: "लागू नहीं"
+    }
+  };
+  
+  // Get current language translations
+  const t = translations[language];
 
   // Check device width
   useEffect(() => {
@@ -116,10 +184,10 @@ const AdminMail = () => {
       console.error("Error fetching members:", error);
       setErrors({ 
         fetch: error.message.includes('403') || error.message.includes('permission')
-          ? "Permission denied. You may not have the required role to access this feature."
+          ? t.permissionDenied
           : error.message.includes('401') || error.message.includes('authenticated') || error.message.includes('Session expired')
-          ? "Authentication error. Please login again."
-          : error.message || "An error occurred while fetching member data"
+          ? t.authError
+          : error.message || t.fetchError
       });
     } finally {
       setIsLoading(false);
@@ -170,7 +238,7 @@ const AdminMail = () => {
       <div className="dashboard-container">
         <div className="main-content-dash d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
           <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">{t.loading}</span>
           </Spinner>
         </div>
       </div>
@@ -184,10 +252,10 @@ const AdminMail = () => {
         <div className="main-content-dash d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
           <div className="text-center">
             <Alert variant="warning">
-              <Alert.Heading>Authentication Required</Alert.Heading>
-              <p>You need to be logged in to view this page.</p>
+              <Alert.Heading>{t.authenticationRequired}</Alert.Heading>
+              <p>{t.needToLogin}</p>
               <Button variant="primary" onClick={() => navigate("/Login")}>
-                Go to Login
+                {t.goToLogin}
               </Button>
             </Alert>
           </div>
@@ -279,21 +347,21 @@ const AdminMail = () => {
     const newErrors = {};
     
     if (formData.member_ids.length === 0) {
-      newErrors.member_ids = "Please select at least one member";
+      newErrors.member_ids = t.membersRequired;
     }
     
     if (!formData.subject.trim()) {
-      newErrors.subject = "Subject is required";
+      newErrors.subject = t.subjectRequired;
     }
     
     if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
+      newErrors.message = t.messageRequired;
     }
     
     return newErrors;
   };
 
-   // Handle form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -318,8 +386,18 @@ const AdminMail = () => {
       
       console.log('Sending payload:', payload);
       
+      // Different API endpoints based on language
+      let apiUrl;
+      if (language === 'en') {
+        // English API endpoint (actual endpoint)
+        apiUrl = 'https://mahadevaaya.com/ngoproject/ngoproject_backend/api/admin-mail/';
+      } else {
+        // Hindi API endpoint (dummy for now)
+        apiUrl = 'https://dummy-api-for-hindi.com/ngoproject/ngoproject_backend/api/admin-mail-hindi/';
+      }
+      
       // API call using authFetch to the correct endpoint
-      const response = await authFetch('https://mahadevaaya.com/ngoproject/ngoproject_backend/api/admin-mail/', {
+      const response = await authFetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -341,7 +419,7 @@ const AdminMail = () => {
       const result = await response.json();
       console.log('Success:', result);
       
-      setSuccessMessage("Mail sent successfully!");
+      setSuccessMessage(t.successMessage);
       
       // Reset form after successful submission
       setTimeout(() => {
@@ -360,18 +438,18 @@ const AdminMail = () => {
       // Handle specific error cases
       if (error.message.includes('403') || error.message.includes('permission')) {
         setErrors({ 
-          submit: "Permission denied. You may not have the required role to access this feature." 
+          submit: t.permissionDenied
         });
       } else if (error.message.includes('authenticated') || error.message.includes('Session expired')) {
         setErrors({ 
-          submit: "Authentication error. Please login again." 
+          submit: t.authError
         });
         // Optionally redirect to login
         setTimeout(() => {
           navigate('/Login');
         }, 2000);
       } else {
-        setErrors({ submit: error.message || "Failed to send mail. Please try again." });
+        setErrors({ submit: error.message || t.submitError });
       }
     } finally {
       setIsSubmitting(false);
@@ -394,10 +472,24 @@ const AdminMail = () => {
           <DashBoardHeader toggleSidebar={toggleSidebar} />
 
           <Container fluid className="dashboard-body dashboard-main-container">
-            <h1 className="page-title">
-              <FaEnvelope className="me-2" />
-              Admin Mail
-            </h1>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h1 className="page-title">
+                <FaEnvelope className="me-2" />
+                {t.pageTitle}
+              </h1>
+              
+              {/* Language Toggle */}
+              <div className="language-toggle">
+                <ToggleButtonGroup type="radio" name="language" value={language} onChange={(val) => setLanguage(val)}>
+                  <ToggleButton id="lang-en" value="en" variant={language === 'en' ? 'primary' : 'outline-primary'}>
+                    English
+                  </ToggleButton>
+                  <ToggleButton id="lang-hi" value="hi" variant={language === 'hi' ? 'primary' : 'outline-primary'}>
+                    हिंदी
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+            </div>
             
             {successMessage && (
               <Alert variant="success" className="mb-4">
@@ -420,21 +512,19 @@ const AdminMail = () => {
             {isLoading ? (
               <div className="d-flex justify-content-center my-5">
                 <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
+                  <span className="visually-hidden">{t.loading}</span>
                 </Spinner>
               </div>
             ) : (
               <Card className="p-4">
                 <Form onSubmit={handleSubmit}>
-                 
-                  
                   <Row>
                     <Col md={12} className="mb-3">
                       <Form.Group controlId="members">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <Form.Label className="mb-0">
                             <FaUsers className="me-1" />
-                            Select Members
+                            {t.selectMembers}
                           </Form.Label>
                           {members.length > 0 && (
                             <div className="d-flex gap-2">
@@ -443,14 +533,14 @@ const AdminMail = () => {
                                 size="sm"
                                 onClick={handleSelectAll}
                               >
-                                Select All
+                                {t.selectAll}
                               </Button>
                               <Button
                                 variant="outline-secondary"
                                 size="sm"
                                 onClick={handleDeselectAll}
                               >
-                                Deselect All
+                                {t.deselectAll}
                               </Button>
                             </div>
                           )}
@@ -477,18 +567,18 @@ const AdminMail = () => {
                                     );
                                   })()}
                                   <div>
-                                    <div className="fw-bold">{member.full_name || member.name || 'N/A'}</div>
-                                    <div className="text-muted small">{member.email || 'N/A'}</div>
-                                    <Badge bg="secondary" className="mt-1">{member.district || member.allocated_district || 'N/A'}</Badge>
+                                    <div className="fw-bold">{member.full_name || member.name || t.na}</div>
+                                    <div className="text-muted small">{member.email || t.na}</div>
+                                    <Badge bg="secondary" className="mt-1">{member.district || member.allocated_district || t.na}</Badge>
                                   </div>
                                 </div>
-                                    <div className="text-muted small">{member.member_id || member.id || member.unique_id}</div>
+                                <div className="text-muted small">{member.member_id || member.id || member.unique_id}</div>
                               </ListGroup.Item>
                             ))}
                           </ListGroup>
                         ) : (
                           <Alert variant="info" className="mt-2">
-                            No members found for this district.
+                            {t.noMembersFound}
                           </Alert>
                         )}
                       </Form.Group>
@@ -498,14 +588,14 @@ const AdminMail = () => {
                   <Row>
                     <Col md={12} className="mb-3">
                       <Form.Group controlId="subject">
-                        <Form.Label>Subject</Form.Label>
+                        <Form.Label>{t.subject}</Form.Label>
                         <Form.Control
                           type="text"
                           name="subject"
                           value={formData.subject}
                           onChange={handleInputChange}
                           isInvalid={!!errors.subject}
-                          placeholder="Enter email subject"
+                          placeholder={t.enterSubject}
                         />
                         <Form.Control.Feedback type="invalid">
                           {errors.subject}
@@ -517,7 +607,7 @@ const AdminMail = () => {
                   <Row>
                     <Col md={12} className="mb-3">
                       <Form.Group controlId="message">
-                        <Form.Label>Message</Form.Label>
+                        <Form.Label>{t.message}</Form.Label>
                         <Form.Control
                           as="textarea"
                           rows={5}
@@ -525,7 +615,7 @@ const AdminMail = () => {
                           value={formData.message}
                           onChange={handleInputChange}
                           isInvalid={!!errors.message}
-                          placeholder="Enter your message"
+                          placeholder={t.enterMessage}
                         />
                         <Form.Control.Feedback type="invalid">
                           {errors.message}
@@ -540,7 +630,7 @@ const AdminMail = () => {
                       className="me-2"
                       onClick={() => navigate('/DistrictDashboard')}
                     >
-                      <FaTimes className="me-1" /> Cancel
+                      <FaTimes className="me-1" /> {t.cancel}
                     </Button>
                     <Button 
                       variant="primary" 
@@ -549,7 +639,7 @@ const AdminMail = () => {
                       className="d-flex align-items-center btn-lg"
                     >
                       <FaSave className="me-1" /> 
-                      {isSubmitting ? 'Sending...' : 'Send Mail'}
+                      {isSubmitting ? t.sending : t.sendMail}
                     </Button>
                   </div>
                 </Form>

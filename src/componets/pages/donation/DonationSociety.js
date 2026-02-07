@@ -260,7 +260,7 @@ const DonationSociety = () => {
           
 
             <div className="container border rounded-3 shadow-lg p-4 bg-white mt-2">
-                  <h1 className="text-center mb-4">Donation Form</h1>
+                  <h1 className="text-center mb-4">Donation </h1>
                 {submitted ? (
                     <Alert variant="success" className="text-center">
                         <Alert.Heading>Thank You for Your Donation!</Alert.Heading>
@@ -328,7 +328,7 @@ const DonationSociety = () => {
                         )}
 
                         <Row className="mb-3">
-                            <Col sm={6}>
+                            <Col sm={4}>
                                 <Form.Group controlId="full_name">
                                     <Form.Label>
                                         Full Name <span className="text-danger">*</span>
@@ -352,7 +352,7 @@ const DonationSociety = () => {
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
-                            <Col sm={6}>
+                            <Col sm={4}>
                                 <Form.Group controlId="email">
                                     <Form.Label>
                                         Email <span className="text-danger">*</span>
@@ -373,10 +373,7 @@ const DonationSociety = () => {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
-                        </Row>
-
-                        <Row className="mb-3">
-                            <Col sm={6}>
+                              <Col sm={4}>
                                 <Form.Group controlId="phone">
                                     <Form.Label>
                                         Phone <span className="text-danger">*</span>
@@ -401,7 +398,11 @@ const DonationSociety = () => {
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
-                            <Col sm={6}>
+                        </Row>
+
+                        <Row className="mb-3">
+                          
+                            <Col sm={4}>
                                 <Form.Group controlId="amount">
                                     <Form.Label>
                                         Amount (₹) <span className="text-danger">*</span>
@@ -425,10 +426,8 @@ const DonationSociety = () => {
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
-                        </Row>
 
-                        <Row className="mb-3">
-                            <Col sm={12}>
+                               <Col sm={8}>
                                 <Form.Group controlId="purpose">
                                     <Form.Label>
                                         Purpose of Donation <span className="text-danger">*</span>
@@ -451,6 +450,8 @@ const DonationSociety = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
+
+                     
 
                         <Row className="mt-4">
                             <Col sm={12} className="text-center">
