@@ -16,6 +16,15 @@ const ManageWings = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
+  // Function to format file size to KB
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   // State for all wings details
   const [wingsDetails, setWingsDetails] = useState([]);
   
@@ -35,6 +44,9 @@ const ManageWings = () => {
   // State for file preview
   const [imagePreview, setImagePreview] = useState(null);
   const [existingImage, setExistingImage] = useState(null);
+  
+  // State for image validation
+  const [imageError, setImageError] = useState(null);
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -160,6 +172,7 @@ const ManageWings = () => {
         // Set existing image URL for preview
         setExistingImage(wingData.image);
         setSelectedWingId(wingId);
+        setImageError(null); // Clear any image errors
       } else {
         console.error("API Response issue:", result);
         throw new Error(result.message || "No wing data found in response");
@@ -180,22 +193,47 @@ const ManageWings = () => {
     fetchWingData(wingId);
   };
 
-  // Handle form input changes
+  // Handle form input changes with image validation
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "image") {
       const file = files[0];
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-      }));
-
+      
+      // Clear previous image error
+      setImageError(null);
+      
       if (file) {
+        // Check file size (50KB to 100KB)
+        const fileSizeKB = file.size / 1024;
+        
+        if (fileSizeKB < 50 || fileSizeKB > 100) {
+          setImageError(`Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`);
+          // Clear the image preview if the size is invalid
+          setImagePreview(null);
+          // Clear the image from formData
+          setFormData((prev) => ({
+            ...prev,
+            image: null,
+          }));
+          // Reset the file input
+          e.target.value = '';
+          return;
+        }
+        
+        setFormData((prev) => ({
+          ...prev,
+          image: file,
+        }));
+
         const previewUrl = URL.createObjectURL(file);
         setImagePreview(previewUrl);
       } else {
         setImagePreview(null);
+        setFormData((prev) => ({
+          ...prev,
+          image: null,
+        }));
       }
     } else {
       setFormData((prev) => ({
@@ -211,6 +249,7 @@ const ManageWings = () => {
       fetchWingData(selectedWingId);
     }
     setImagePreview(null);
+    setImageError(null);
     setIsEditing(false);
     setShowAlert(false);
   };
@@ -220,6 +259,7 @@ const ManageWings = () => {
     setSelectedWingId(null);
     setIsEditing(false);
     setShowAlert(false);
+    setImageError(null);
   };
 
   // Enable editing mode
@@ -227,6 +267,7 @@ const ManageWings = () => {
     e.preventDefault();
     setIsEditing(true);
     setShowAlert(false);
+    setImageError(null);
   };
 
   // Handle delete request
@@ -334,6 +375,15 @@ const ManageWings = () => {
   // Handle form submission (PUT request)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check for image validation errors before submitting
+    if (imageError) {
+      setMessage(imageError);
+      setVariant("danger");
+      setShowAlert(true);
+      return;
+    }
+    
     setIsSubmitting(true);
     setShowAlert(false);
 
@@ -757,6 +807,12 @@ const ManageWings = () => {
                               onChange={handleChange}
                               accept="image/*"
                             />
+                            <Form.Text className="text-muted">
+                              Upload an image between 50KB and 100KB
+                            </Form.Text>
+                            {imageError && (
+                              <div className="text-danger mt-1">{imageError}</div>
+                            )}
                             {imagePreview ? (
                               <div className="mt-3">
                                 <p>New Image Preview:</p>
@@ -766,6 +822,11 @@ const ManageWings = () => {
                                   className="img-current"
                                   style={{ maxWidth: "200px", maxHeight: "200px" }}
                                 />
+                                {formData.image && (
+                                  <div className="mt-1">
+                                    <small className="text-muted">File size: {formatFileSize(formData.image.size)}</small>
+                                  </div>
+                                )}
                               </div>
                             ) : (
                               existingImage && (

@@ -19,6 +19,16 @@ const AddDistrictActivity = () => {
   const [success, setSuccess] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [imageError, setImageError] = useState(null);
+
+  // Function to format file size to KB
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   // District options for dropdown
   const districtOptions = [
@@ -113,14 +123,35 @@ const AddDistrictActivity = () => {
     }
   };
 
-  // Handle image upload
+  // Handle image upload with validation
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    
+    // Clear previous image error
+    setImageError(null);
+    
     if (file) {
+      // Check file size (50KB to 100KB)
+      const fileSizeKB = file.size / 1024;
+      
+      if (fileSizeKB < 50 || fileSizeKB > 100) {
+        setImageError(`Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`);
+        // Clear the image preview if the size is invalid
+        setImagePreview(null);
+        // Clear the image file
+        setImageFile(null);
+        // Reset the file input
+        e.target.value = '';
+        return;
+      }
+      
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
+    } else {
+      setImageFile(null);
+      setImagePreview(null);
     }
   };
 
@@ -145,6 +176,12 @@ const AddDistrictActivity = () => {
       errors.activity_fee = "Valid activity fee is required";
     }
     if (!formData.allocated_district) errors.allocated_district = "District is required";
+    
+    // Check for image validation errors
+    if (imageError) {
+      errors.image = imageError;
+    }
+    
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -191,7 +228,8 @@ const AddDistrictActivity = () => {
           allocated_district: ""
         });
         setImageFile(null);
-        setImagePreview("");
+        setImagePreview(null);
+        setImageError(null);
         setActivityStatus({ is_past: false, is_present: false, is_upcoming: false });
         setTimeout(() => navigate('/ManageDistrictActivity'), 2000);
       } else {
@@ -366,8 +404,15 @@ const AddDistrictActivity = () => {
                           onChange={handleImageChange}
                           accept="image/*"
                           className="form-control-lg"
+                          isInvalid={!!validationErrors.image}
                         />
-                        <Form.Text className="text-muted">Upload an image for the activity (optional)</Form.Text>
+                        <Form.Text className="text-muted">Upload an image between 50KB and 100KB (optional)</Form.Text>
+                        {imageError && (
+                          <div className="text-danger mt-1">{imageError}</div>
+                        )}
+                        <Form.Control.Feedback type="invalid">
+                          {validationErrors.image}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                     
@@ -480,6 +525,11 @@ const AddDistrictActivity = () => {
                       <Col md={12}>
                         <p><strong>Image Preview:</strong></p>
                         <img src={imagePreview} alt="Activity preview" className="img-fluid" style={{maxHeight: '200px'}} />
+                        {imageFile && (
+                          <div className="mt-1">
+                            <small className="text-muted">File size: {formatFileSize(imageFile.size)}</small>
+                          </div>
+                        )}
                       </Col>
                     </Row>
                   )}

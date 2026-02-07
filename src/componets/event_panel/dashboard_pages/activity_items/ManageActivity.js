@@ -15,6 +15,15 @@ const ManageActivity = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
+  // Function to format file size to KB
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   // District options for dropdown
   const districtOptions = [
     { value: "haridwar", label: "Haridwar" },
@@ -56,6 +65,9 @@ const ManageActivity = () => {
     created_at: "",
     updated_at: ""
   });
+
+  // State for image validation
+  const [imageError, setImageError] = useState(null);
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -193,6 +205,7 @@ const ManageActivity = () => {
       setSelectedActivityId(activityId);
       // store existing image for preview
       setExistingImage(activityData.image || null);
+      setImageError(null); // Clear any image errors
     } catch (error) {
       console.error("Error fetching activity data:", error);
       setMessage(error.message || "An error occurred while fetching activity data");
@@ -209,22 +222,47 @@ const ManageActivity = () => {
     fetchActivityData(activityId);
   };
 
-  // Handle form input changes
+  // Handle form input changes with image validation
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "image") {
       const file = files && files[0];
-      setFormData((prev) => ({
-        ...prev,
-        image: file || null,
-      }));
-
+      
+      // Clear previous image error
+      setImageError(null);
+      
       if (file) {
+        // Check file size (50KB to 100KB)
+        const fileSizeKB = file.size / 1024;
+        
+        if (fileSizeKB < 50 || fileSizeKB > 100) {
+          setImageError(`Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`);
+          // Clear the image preview if the size is invalid
+          setImagePreview(null);
+          // Clear the image from formData
+          setFormData((prev) => ({
+            ...prev,
+            image: null,
+          }));
+          // Reset the file input
+          e.target.value = '';
+          return;
+        }
+        
+        setFormData((prev) => ({
+          ...prev,
+          image: file,
+        }));
+        
         const previewUrl = URL.createObjectURL(file);
         setImagePreview(previewUrl);
       } else {
         setImagePreview(null);
+        setFormData((prev) => ({
+          ...prev,
+          image: null,
+        }));
       }
     } else {
       setFormData((prev) => ({
@@ -241,6 +279,7 @@ const ManageActivity = () => {
     }
     setIsEditing(false);
     setShowAlert(false);
+    setImageError(null);
   };
 
   // Go back to activity list
@@ -248,6 +287,7 @@ const ManageActivity = () => {
     setSelectedActivityId(null);
     setIsEditing(false);
     setShowAlert(false);
+    setImageError(null);
   };
 
   // Enable editing mode
@@ -255,6 +295,7 @@ const ManageActivity = () => {
     e.preventDefault();
     setIsEditing(true);
     setShowAlert(false);
+    setImageError(null);
   };
 
   // Enable adding new activity
@@ -282,6 +323,7 @@ const ManageActivity = () => {
     setIsEditing(true);
     setSelectedActivityId(null);
     setShowAlert(false);
+    setImageError(null);
   };
 
   // Calculate activity status based on date
@@ -324,6 +366,15 @@ const ManageActivity = () => {
   // Handle form submission (POST for new, PUT for update)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check for image validation errors before submitting
+    if (imageError) {
+      setMessage(imageError);
+      setVariant("danger");
+      setShowAlert(true);
+      return;
+    }
+    
     setIsSubmitting(true);
     setShowAlert(false);
 
@@ -956,6 +1007,12 @@ const ManageActivity = () => {
                                       onChange={handleChange}
                                       accept="image/*"
                                     />
+                                    <Form.Text className="text-muted">
+                                      Upload an image between 50KB and 100KB
+                                    </Form.Text>
+                                    {imageError && (
+                                      <div className="text-danger mt-1">{imageError}</div>
+                                    )}
                                     {imagePreview ? (
                                       <div className="mt-3">
                                         <p>New Image Preview:</p>
@@ -964,6 +1021,11 @@ const ManageActivity = () => {
                                           alt="Image Preview"
                                           style={{ maxWidth: "200px", maxHeight: "200px" }}
                                         />
+                                        {formData.image && (
+                                          <div className="mt-1">
+                                            <small className="text-muted">File size: {formatFileSize(formData.image.size)}</small>
+                                          </div>
+                                        )}
                                       </div>
                                     ) : (
                                       existingImage && (

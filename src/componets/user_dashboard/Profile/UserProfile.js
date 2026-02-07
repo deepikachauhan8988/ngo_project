@@ -62,6 +62,7 @@ const UserProfile = () => {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState("");
 
   // Ref for hidden file input
   const fileInputRef = useRef(null);
@@ -170,6 +171,19 @@ const UserProfile = () => {
 
     if (name === 'image') {
       const file = files && files[0];
+      
+      // Validate image size (50KB to 100KB)
+      if (file) {
+        const fileSizeKB = file.size / 1024;
+        if (fileSizeKB < 50 || fileSizeKB > 100) {
+          setPhotoError(`Image size must be between 50KB and 100KB. Current size: ${fileSizeKB.toFixed(2)}KB`);
+          setFormData(prev => ({ ...prev, image: null }));
+          setImagePreview(null);
+          return;
+        }
+      }
+      
+      setPhotoError("");
       setFormData(prev => ({ ...prev, image: file || null }));
       if (file) {
         const previewUrl = URL.createObjectURL(file);
@@ -207,6 +221,16 @@ const UserProfile = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
+      // Validate image size (50KB to 100KB)
+      const fileSizeKB = file.size / 1024;
+      if (fileSizeKB < 50 || fileSizeKB > 100) {
+        setPhotoError(`Image size must be between 50KB and 100KB. Current size: ${fileSizeKB.toFixed(2)}KB`);
+        setSelectedPhoto(null);
+        setPhotoPreview(null);
+        return;
+      }
+      
+      setPhotoError("");
       setSelectedPhoto(file);
       const previewUrl = URL.createObjectURL(file);
       setPhotoPreview(previewUrl);
@@ -218,6 +242,7 @@ const UserProfile = () => {
     setShowPhotoModal(true);
     setSelectedPhoto(null);
     setPhotoPreview(null);
+    setPhotoError("");
   };
 
   // Close photo modal
@@ -225,6 +250,7 @@ const UserProfile = () => {
     setShowPhotoModal(false);
     setSelectedPhoto(null);
     setPhotoPreview(null);
+    setPhotoError("");
   };
 
   // Upload photo
@@ -542,6 +568,12 @@ const UserProfile = () => {
           .profile-stat-label {
             font-size: 0.875rem;
             color: #6c757d;
+          }
+          
+          .photo-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
           }
         `}
       </style>
@@ -1115,8 +1147,9 @@ const UserProfile = () => {
               ref={fileInputRef}
             />
             <Form.Text className="text-muted">
-              Select a new profile photo. Recommended size: 200x200 pixels.
+              Select a new profile photo. Image size must be between 50KB and 100KB.
             </Form.Text>
+            {photoError && <div className="photo-error">{photoError}</div>}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
@@ -1126,7 +1159,7 @@ const UserProfile = () => {
           <Button
             variant="primary"
             onClick={uploadPhoto}
-            disabled={!selectedPhoto || isUploadingPhoto}
+            disabled={!selectedPhoto || isUploadingPhoto || photoError !== ""}
           >
             {isUploadingPhoto ? (
               <>

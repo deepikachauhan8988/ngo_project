@@ -15,6 +15,15 @@ const AddWings = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   
+  // Function to format file size to KB
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+  
   // Form state
   const [formData, setFormData] = useState({
     organization_name: "",
@@ -32,6 +41,7 @@ const AddWings = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageError, setImageError] = useState(null);
 
   // Check device width
   useEffect(() => {
@@ -65,10 +75,31 @@ const AddWings = () => {
     }
   };
 
-  // Handle image upload
+  // Handle image upload with validation
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    
+    // Clear previous image error
+    setImageError(null);
+    
     if (file) {
+      // Check file size (50KB to 100KB)
+      const fileSizeKB = file.size / 1024;
+      
+      if (fileSizeKB < 50 || fileSizeKB > 100) {
+        setImageError(`Image size must be between 50KB and 100KB. Your image is ${formatFileSize(file.size)}.`);
+        // Clear the image preview if the size is invalid
+        setImagePreview(null);
+        // Clear the image from formData
+        setFormData({
+          ...formData,
+          image: null
+        });
+        // Reset the file input
+        e.target.value = '';
+        return;
+      }
+      
       setFormData({
         ...formData,
         image: file
@@ -117,6 +148,11 @@ const AddWings = () => {
       newErrors.phone = "Phone number is required";
     } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
       newErrors.phone = "Phone number should be 10 digits";
+    }
+    
+    // Check for image validation errors
+    if (imageError) {
+      newErrors.image = imageError;
     }
     
     return newErrors;
@@ -182,6 +218,7 @@ const AddWings = () => {
           image: null
         });
         setImagePreview(null);
+        setImageError(null);
         setSuccessMessage("");
       }, 3000);
       
@@ -317,13 +354,23 @@ const AddWings = () => {
                   
                   <Col md={6} className="mb-3">
                     <Form.Group controlId="image">
-                      <Form.Label>Portfolio  Image</Form.Label>
+                      <Form.Label>Portfolio Image</Form.Label>
                       <Form.Control
                         type="file"
                         name="image"
                         onChange={handleImageChange}
                         accept="image/*"
+                        isInvalid={!!errors.image}
                       />
+                      <Form.Text className="text-muted">
+                        Upload an image between 50KB and 100KB
+                      </Form.Text>
+                      {imageError && (
+                        <div className="text-danger mt-1">{imageError}</div>
+                      )}
+                      <Form.Control.Feedback type="invalid">
+                        {errors.image}
+                      </Form.Control.Feedback>
                       {imagePreview && (
                         <div className="mt-2">
                           <img 
@@ -331,6 +378,11 @@ const AddWings = () => {
                             alt="Image preview" 
                             style={{ maxWidth: "100px", maxHeight: "100px" }}
                           />
+                          {formData.image && (
+                            <div className="mt-1">
+                              <small className="text-muted">File size: {formatFileSize(formData.image.size)}</small>
+                            </div>
+                          )}
                         </div>
                       )}
                     </Form.Group>
