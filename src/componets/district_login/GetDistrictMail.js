@@ -284,42 +284,9 @@ const GetDistrictMail = () => {
                     <FaBug className="me-1" /> {showDetails ? 'Hide' : 'Show'} Technical Details
                   </Button>
                   
-                  {showDetails && (
-                    <Card className="mb-3 bg-light">
-                      <Card.Body>
-                        <h6>Technical Details:</h6>
-                        <ul>
-                          <li>Authentication token: Valid</li>
-                          <li>User role: {auth.role}</li>
-                          <li>User ID: {auth.unique_id}</li>
-                          <li>Assigned district: {auth.allocated_district}</li>
-                          <li>API endpoint: /api/district-mail/</li>
-                          <li>Response status: 403 Forbidden</li>
-                          <li>Response message: "You do not have permission to perform this action."</li>
-                        </ul>
-                        <p className="mb-0">
-                          <strong>Possible causes:</strong>
-                          <ul>
-                            <li>The district-admin role doesn't have permission to access the district-mail endpoint</li>
-                            <li>The backend permissions for the district-mail endpoint are misconfigured</li>
-                            <li>The endpoint requires additional parameters or headers</li>
-                          </ul>
-                        </p>
-                      </Card.Body>
-                    </Card>
-                  )}
+            
                   
-                  <div className="d-flex flex-wrap gap-2">
-                    <Button variant="outline-warning" size="sm" onClick={() => window.location.reload()}>
-                      <FaCheck className="me-1" /> Try Again
-                    </Button>
-                    <Button variant="outline-info" size="sm" onClick={() => navigate("/Dashboard")}>
-                      <FaInfoCircle className="me-1" /> Go to Dashboard
-                    </Button>
-                    <Button variant="outline-primary" size="sm" onClick={() => navigate("/DistrictMailMeeting")}>
-                      <FaEnvelope className="me-1" /> Send New Mail
-                    </Button>
-                  </div>
+                
                 </div>
               </div>
             </Alert>
@@ -369,29 +336,7 @@ const GetDistrictMail = () => {
             </div>
           ) : (
             <>
-              <Card className="mb-4">
-                <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
-                  <h5 className="mb-0">Mail Details</h5>
-                  {usingSampleData && <Badge bg="warning">Sample Data</Badge>}
-                </Card.Header>
-                <Card.Body>
-                  <div className="row">
-                    <div className="col-md-6 mb-3">
-                      <strong>District Admin ID:</strong> {districtMailData.district_admin_id || "N/A"}
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <strong>Recipients:</strong> {districtMailData.member_ids ? districtMailData.member_ids.length : 0} members
-                    </div>
-                    <div className="col-12 mb-3">
-                      <strong>Subject:</strong> {districtMailData.subject || 'N/A'}
-                    </div>
-                    <div className="col-12">
-                      <strong>Message:</strong>
-                      <div className="mt-2 p-3 bg-light rounded">{districtMailData.message || 'N/A'}</div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
+            
 
               <Card>
                 <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
